@@ -42,35 +42,8 @@ fun NewsCard() {
                 containerColor = MaterialTheme.colorScheme.primary,
                 contentColor = MaterialTheme.colorScheme.onPrimary
             )
-        ) {
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(7.dp)
-            ) {
-                Image(
-                    painter = painterResource(R.drawable.post_comunity_thumbnail),
-                    contentDescription = "",
-                    contentScale = ContentScale.Fit,
-                    modifier = Modifier
-                        .clip(CircleShape)
-                        .size(50.dp)
-                )
-                Column(
-                    modifier = Modifier
-                        .padding(7.dp)
-                        .weight(1f)
-                ) {
-                    Text(text = "уволено", color = MaterialTheme.colorScheme.onPrimary)
-                    Text(text = "14:00", color = MaterialTheme.colorScheme.onSecondary)
-                }
-                Icon(
-                    imageVector = Icons.Rounded.MoreVert,
-                    contentDescription = "",
-                    tint = MaterialTheme.colorScheme.onSecondary
-                )
-            }
+        ){
+            PostHeader()
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -91,45 +64,75 @@ fun NewsCard() {
             )
             Row(
                 horizontalArrangement = Arrangement.SpaceBetween,
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier.fillMaxWidth().padding(7.dp)
             ) {
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
-                    modifier = Modifier.padding(7.dp)
+                    modifier = Modifier.weight(1f)
                 ) {
-                    Text(text = "200", modifier = Modifier.padding(start = 7.dp))
-                    Image(
-                        painter = painterResource(id = R.drawable.ic_views_count),
-                        contentDescription = "",
-                        modifier = Modifier.padding(start = 7.dp)
-                    )
+                    IconWithText(R.drawable.ic_views_count, "200")
                 }
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
-                    modifier = Modifier.padding(7.dp)
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    modifier = Modifier.weight(1f)
                 ) {
-                    Text(text = "200", modifier = Modifier.padding(start = 7.dp))
-                    Image(
-                        painter = painterResource(id = R.drawable.ic_share),
-                        contentDescription = "",
-                        modifier = Modifier.padding(start = 7.dp)
-                    )
-                    Text(text = "200", modifier = Modifier.padding(start = 7.dp))
-                    Image(
-                        painter = painterResource(id = R.drawable.ic_comment),
-                        contentDescription = "",
-                        modifier = Modifier.padding(start = 7.dp)
-                    )
-                    Text(text = "200", modifier = Modifier.padding(start = 7.dp))
-                    Image(
-                        painter = painterResource(id = R.drawable.ic_like),
-                        contentDescription = "",
-                        modifier = Modifier.padding(start = 7.dp)
-                    )
+                    IconWithText(iconId = R.drawable.ic_share, text = "23")
+                    IconWithText(iconId = R.drawable.ic_comment, text = "232")
+                    IconWithText(iconId = R.drawable.ic_like, text = "53")
                 }
             }
         }
     }
+}
+
+@Composable
+private fun PostHeader() {
+    Row(
+        verticalAlignment = Alignment.CenterVertically,
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(7.dp)
+    ) {
+        Image(
+            painter = painterResource(R.drawable.post_comunity_thumbnail),
+            contentDescription = "",
+            contentScale = ContentScale.Fit,
+            modifier = Modifier
+                .clip(CircleShape)
+                .size(50.dp)
+        )
+        Column(
+            modifier = Modifier
+                .padding(7.dp)
+                .weight(1f)
+        ) {
+            Text(text = "уволено", color = MaterialTheme.colorScheme.onPrimary)
+            Text(text = "14:00", color = MaterialTheme.colorScheme.onSecondary)
+        }
+        Icon(
+            imageVector = Icons.Rounded.MoreVert,
+            contentDescription = "",
+            tint = MaterialTheme.colorScheme.onSecondary
+        )
+    }
+}
+
+@Composable
+private fun IconWithText(
+    iconId: Int,
+    text: String
+) {
+    Text(
+        text = text,
+        color = MaterialTheme.colorScheme.onSecondary
+    )
+    Icon(
+        painter = painterResource(id = iconId),
+        contentDescription = "",
+        modifier = Modifier.padding(end = 7.dp),
+        tint = MaterialTheme.colorScheme.onSecondary
+    )
 }
 
 @Preview
