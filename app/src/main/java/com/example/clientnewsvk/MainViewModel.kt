@@ -8,14 +8,40 @@ import com.example.clientnewsvk.domain.StatisticItem
 
 class MainViewModel : ViewModel() {
 
-    private val _feedPost = MutableLiveData(FeedPost())
-    val feedPost: LiveData<FeedPost> = _feedPost
+    private val initList = mutableListOf<FeedPost>().apply {
+        repeat(10) {
+            add(
+                FeedPost(
+                    id = it
+                )
+            )
+        }
+    }
 
-    fun updateStatistic(
+    private val _feedPosts = MutableLiveData<List<FeedPost>>(initList)
+    val feedPosts: LiveData<List<FeedPost>> = _feedPosts
+
+    fun updateStatisticList(
         statistic: StatisticItem,
+        post: FeedPost,
     ) {
-        val newStatistics =
-            _feedPost.value?.statistics?.toMutableList() ?: throw IllegalStateException()
+        val oldPosts = _feedPosts.value ?: throw IllegalStateException()
+        val newPosts = oldPosts.toMutableList()
+        newPosts.replaceAll {
+            if (it == post) {
+                it.copy(statistics = updateStatistic(statistic, it.statistics))
+            } else {
+                it
+            }
+        }
+        _feedPosts.value = newPosts
+    }
+
+    private fun updateStatistic(
+        statistic: StatisticItem,
+        oldStatistics: List<StatisticItem>,
+    ): List<StatisticItem> {
+        val newStatistics = oldStatistics.toMutableList()
         newStatistics.replaceAll {
             if (it.type == statistic.type) {
                 it.copy(count = it.count + 1)
@@ -23,8 +49,13 @@ class MainViewModel : ViewModel() {
                 it
             }
         }
-        _feedPost.value = _feedPost.value?.copy(
-            statistics = newStatistics
-        )
+        return newStatistics
+    }
+
+    fun deleteItem(feedPost: FeedPost) {
+        val oldPosts = _feedPosts.value ?: throw IllegalStateException()
+        val newPosts = oldPosts.toMutableList()
+        newPosts.remove(feedPost)
+        _feedPosts.value = newPosts
     }
 }

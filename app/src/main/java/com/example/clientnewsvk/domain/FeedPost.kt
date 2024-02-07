@@ -3,6 +3,7 @@ package com.example.clientnewsvk.domain
 import com.example.clientnewsvk.R
 
 data class FeedPost(
+    val id: Int,
     val groupName: String = "уволено",
     val time: String = "14:00",
     val iconId: Int = R.drawable.post_comunity_thumbnail,

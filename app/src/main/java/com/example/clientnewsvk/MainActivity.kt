@@ -23,7 +23,24 @@ class MainActivity : ComponentActivity() {
                         .fillMaxSize()
                         .background(MaterialTheme.colorScheme.background)
                 ) {
-                    MainScreenBottomNavigation(viewModel)
+                    MainScreenBottomNavigation(
+                        viewModel = viewModel,
+                        onViewsClickListener = { statisticItem, feedPost ->
+                            viewModel.updateStatisticList(statisticItem, feedPost)
+                        },
+                        onSharesClickListener = { statisticItem, feedPost ->
+                            viewModel.updateStatisticList(statisticItem, feedPost)
+                        },
+                        onCommentClickListener = { statisticItem, feedPost ->
+                            viewModel.updateStatisticList(statisticItem, feedPost)
+                        },
+                        onLikesClickListener = { statisticItem, feedPost ->
+                            viewModel.updateStatisticList(statisticItem, feedPost)
+                        },
+                        onPostSwipedEndToStart = {
+                            viewModel.deleteItem(it)
+                        }
+                    )
                 }
             }
         }
