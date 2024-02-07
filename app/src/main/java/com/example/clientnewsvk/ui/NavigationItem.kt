@@ -8,21 +8,25 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import com.example.clientnewsvk.R
 
 sealed class NavigationItem(
+    val screen: ScreensNavigation,
     val nameId: Int,
     val imageVector: ImageVector,
 ) {
     data object Main : NavigationItem(
+        ScreensNavigation.Main,
         R.string.main_screen,
         Icons.Outlined.Home
     )
 
     data object Favourite : NavigationItem(
+        ScreensNavigation.Favourite,
         R.string.favourite,
         Icons.Outlined.Favorite
     )
 
     data object Profile : NavigationItem(
-        R.string.main_screen,
+        ScreensNavigation.Profile,
+        R.string.profile,
         Icons.Outlined.Person
     )
 }

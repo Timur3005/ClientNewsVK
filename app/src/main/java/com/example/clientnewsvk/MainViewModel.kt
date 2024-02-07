@@ -5,6 +5,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.example.clientnewsvk.domain.FeedPost
 import com.example.clientnewsvk.domain.StatisticItem
+import com.example.clientnewsvk.ui.NavigationItem
 
 class MainViewModel : ViewModel() {
 
@@ -20,6 +21,13 @@ class MainViewModel : ViewModel() {
 
     private val _feedPosts = MutableLiveData<List<FeedPost>>(initList)
     val feedPosts: LiveData<List<FeedPost>> = _feedPosts
+
+    private val _screenSelected = MutableLiveData<NavigationItem>(NavigationItem.Main)
+    val screenSelected: LiveData<NavigationItem> = _screenSelected
+
+    fun updateSelectedScreen(screen: NavigationItem){
+        _screenSelected.value = screen
+    }
 
     fun updateStatisticList(
         statistic: StatisticItem,
