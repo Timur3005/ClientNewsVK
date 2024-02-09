@@ -14,15 +14,15 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.navigation.compose.currentBackStackEntryAsState
-import androidx.navigation.compose.rememberNavController
 import com.example.clientnewsvk.MainViewModel
 import com.example.clientnewsvk.domain.FeedPost
 import com.example.clientnewsvk.domain.StatisticItem
+import com.example.clientnewsvk.rememberNavigationState
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
@@ -35,16 +35,18 @@ fun MainScreenBottomNavigation(
     onPostSwipedEndToStart: (FeedPost) -> Unit
 ) {
     val listItem = listOf(NavigationItem.Main, NavigationItem.Favourite, NavigationItem.Profile)
-    val navController = rememberNavController()
+    val navState = rememberNavigationState()
     Scaffold(
         bottomBar = {
             NavigationBar {
-                val currentScreenState by navController.currentBackStackEntryAsState()
                 listItem.forEach { navigationItem ->
                     NavigationBarItem(
-                        selected = currentScreenState?.destination?.route == navigationItem.screen.route,
+                        selected =
+                        navState.navController.currentBackStackEntryAsState()
+                            .value?.destination?.route == navigationItem.screen.route
+                        ,
                         onClick = {
-                            navController.navigate(navigationItem.screen.route)
+                            navState.navigateTo(navigationItem.screen.route)
                         },
                         icon = {
                             Icon(navigationItem.imageVector, contentDescription = null)
@@ -64,7 +66,7 @@ fun MainScreenBottomNavigation(
         }
     ) { paddingValues ->
         AppNavigationGraph(
-            navController = navController,
+            navController = navState.navController,
             mainScreen = {
                 HomeScreen(
                     viewModel,
@@ -84,7 +86,7 @@ fun MainScreenBottomNavigation(
 
 @Composable
 private fun TextCounter(item: NavigationItem, paddingValues: PaddingValues) {
-    var countClick by remember {
+    var countClick by rememberSaveable {
         mutableStateOf(0)
     }
     Text(
