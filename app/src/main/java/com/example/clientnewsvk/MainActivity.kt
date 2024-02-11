@@ -24,22 +24,7 @@ class MainActivity : ComponentActivity() {
                         .background(MaterialTheme.colorScheme.background)
                 ) {
                     MainScreenBottomNavigation(
-                        viewModel = viewModel,
-                        onViewsClickListener = { statisticItem, feedPost ->
-                            viewModel.updateStatisticList(statisticItem, feedPost)
-                        },
-                        onSharesClickListener = { statisticItem, feedPost ->
-                            viewModel.updateStatisticList(statisticItem, feedPost)
-                        },
-                        onCommentClickListener = { statisticItem, feedPost ->
-                            viewModel.updateStatisticList(statisticItem, feedPost)
-                        },
-                        onLikesClickListener = { statisticItem, feedPost ->
-                            viewModel.updateStatisticList(statisticItem, feedPost)
-                        },
-                        onPostSwipedEndToStart = {
-                            viewModel.deleteItem(it)
-                        }
+                        viewModel = viewModel
                     )
                 }
             }

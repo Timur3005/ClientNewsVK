@@ -1,5 +1,6 @@
 package com.example.clientnewsvk.ui
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.PaddingValues
@@ -27,13 +28,22 @@ fun HomeScreen(
     onSharesClickListener: (StatisticItem, FeedPost) -> Unit,
     onCommentClickListener: (StatisticItem, FeedPost) -> Unit,
     onLikesClickListener: (StatisticItem, FeedPost) -> Unit,
-    onViewsClickListener: (StatisticItem, FeedPost) -> Unit,
+    onViewsClickListener: (StatisticItem, FeedPost) -> Unit
 ) {
     val vmState = viewModel.screenState.observeAsState(HomeScreenState.Initial)
 
     when (val state = vmState.value){
         is HomeScreenState.Comments -> {
-            CommentsScreen(post = state.feedPost, comments = state.comments)
+            CommentsScreen(
+                post = state.feedPost,
+                comments = state.comments,
+                navigationClickListener = {
+                    viewModel.closeComments()
+                }
+            )
+            BackHandler {
+                viewModel.closeComments()
+            }
         }
         HomeScreenState.Initial -> {}
         is HomeScreenState.Posts -> {

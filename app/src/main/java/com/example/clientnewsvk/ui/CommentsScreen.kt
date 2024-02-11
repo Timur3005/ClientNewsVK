@@ -32,7 +32,8 @@ import com.example.clientnewsvk.domain.FeedPost
 @Composable
 fun CommentsScreen(
     post: FeedPost,
-    comments: List<CommentItem>
+    comments: List<CommentItem>,
+    navigationClickListener: () -> Unit,
 ) {
     Scaffold(
         topBar = {
@@ -41,7 +42,7 @@ fun CommentsScreen(
                     Text(text = "Comments For Feed Post with id: ${post.id}")
                 },
                 navigationIcon = {
-                    IconButton(onClick = {}) {
+                    IconButton(onClick = { navigationClickListener() }) {
                         Icon(imageVector = Icons.Filled.ArrowBack, contentDescription = null)
                     }
                 }

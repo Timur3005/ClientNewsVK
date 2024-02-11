@@ -27,12 +27,7 @@ import com.example.clientnewsvk.rememberNavigationState
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
 fun MainScreenBottomNavigation(
-    viewModel: MainViewModel,
-    onViewsClickListener: (StatisticItem, FeedPost) -> Unit,
-    onSharesClickListener: (StatisticItem, FeedPost) -> Unit,
-    onCommentClickListener: (StatisticItem, FeedPost) -> Unit,
-    onLikesClickListener: (StatisticItem, FeedPost) -> Unit,
-    onPostSwipedEndToStart: (FeedPost) -> Unit
+    viewModel: MainViewModel
 ) {
     val listItem = listOf(NavigationItem.Main, NavigationItem.Favourite, NavigationItem.Profile)
     val navState = rememberNavigationState()
@@ -69,13 +64,23 @@ fun MainScreenBottomNavigation(
             navController = navState.navController,
             mainScreen = {
                 HomeScreen(
-                    viewModel,
-                    paddingValues,
-                    onPostSwipedEndToStart,
-                    onSharesClickListener,
-                    onCommentClickListener,
-                    onLikesClickListener,
-                    onViewsClickListener
+                    viewModel = viewModel,
+                    paddingValues = paddingValues,
+                    onPostSwipedEndToStart = {
+                        viewModel.deleteItem(it)
+                    },
+                    onViewsClickListener = { statistic, post ->
+                        viewModel.updateStatisticList(statistic, post)
+                    },
+                    onLikesClickListener = { statistic, post ->
+                        viewModel.updateStatisticList(statistic, post)
+                    },
+                    onCommentClickListener = { _, post ->
+                        viewModel.showComments(post)
+                    },
+                    onSharesClickListener = { statistic, post ->
+                        viewModel.updateStatisticList(statistic, post)
+                    }
                 )
             },
             favouriteScreen = { TextCounter(item = NavigationItem.Favourite, paddingValues) },
