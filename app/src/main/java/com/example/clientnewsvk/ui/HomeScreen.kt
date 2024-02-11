@@ -16,10 +16,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.example.clientnewsvk.MainViewModel
 import com.example.clientnewsvk.domain.FeedPost
+import com.example.clientnewsvk.domain.HomeScreenState
 import com.example.clientnewsvk.domain.StatisticItem
 
 @Composable
-@OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
 fun HomeScreen(
     viewModel: MainViewModel,
     paddingValues: PaddingValues,
@@ -29,7 +29,38 @@ fun HomeScreen(
     onLikesClickListener: (StatisticItem, FeedPost) -> Unit,
     onViewsClickListener: (StatisticItem, FeedPost) -> Unit,
 ) {
-    val vmState = viewModel.feedPosts.observeAsState(listOf())
+    val vmState = viewModel.screenState.observeAsState(HomeScreenState.Initial)
+
+    when (val state = vmState.value){
+        is HomeScreenState.Comments -> {
+            CommentsScreen(post = state.feedPost, comments = state.comments)
+        }
+        HomeScreenState.Initial -> {}
+        is HomeScreenState.Posts -> {
+            FeedPosts(
+                paddingValues,
+                state.posts,
+                onPostSwipedEndToStart,
+                onSharesClickListener,
+                onCommentClickListener,
+                onLikesClickListener,
+                onViewsClickListener
+            )
+        }
+    }
+}
+
+@Composable
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
+private fun FeedPosts(
+    paddingValues: PaddingValues,
+    posts: List<FeedPost>,
+    onPostSwipedEndToStart: (FeedPost) -> Unit,
+    onSharesClickListener: (StatisticItem, FeedPost) -> Unit,
+    onCommentClickListener: (StatisticItem, FeedPost) -> Unit,
+    onLikesClickListener: (StatisticItem, FeedPost) -> Unit,
+    onViewsClickListener: (StatisticItem, FeedPost) -> Unit,
+) {
     LazyColumn(
         modifier = Modifier.padding(paddingValues),
         contentPadding = PaddingValues(
@@ -40,7 +71,7 @@ fun HomeScreen(
         ),
         verticalArrangement = Arrangement.spacedBy(8.dp)
     ) {
-        items(items = vmState.value, key = { it.id }) { post ->
+        items(items = posts, key = { it.id }) { post ->
 
             val dismissState = rememberDismissState()
 
