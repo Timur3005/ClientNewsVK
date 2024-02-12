@@ -21,42 +21,60 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.clientnewsvk.CommentsViewModel
+import com.example.clientnewsvk.CommentsViewModelFactory
 import com.example.clientnewsvk.domain.CommentItem
+import com.example.clientnewsvk.domain.CommentsScreenState
 import com.example.clientnewsvk.domain.FeedPost
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CommentsScreen(
-    post: FeedPost,
-    comments: List<CommentItem>,
     navigationClickListener: () -> Unit,
+    feedPost: FeedPost
 ) {
-    Scaffold(
-        topBar = {
-            TopAppBar(
-                title = {
-                    Text(text = "Comments For Feed Post with id: ${post.id}")
-                },
-                navigationIcon = {
-                    IconButton(onClick = { navigationClickListener() }) {
-                        Icon(imageVector = Icons.Filled.ArrowBack, contentDescription = null)
+    val viewModel: CommentsViewModel = viewModel(
+        factory = CommentsViewModelFactory(feedPost)
+    )
+    val screenState = viewModel.screenState.observeAsState(CommentsScreenState.Initial)
+    val currentState = screenState.value
+    if (currentState is CommentsScreenState.Comments) {
+        Scaffold(
+            topBar = {
+                TopAppBar(
+                    title = {
+                        Text(text = "Comments For Feed Post with id: ${currentState.post.id}")
+                    },
+                    navigationIcon = {
+                        IconButton(onClick = { navigationClickListener() }) {
+                            Icon(imageVector = Icons.Filled.ArrowBack, contentDescription = null)
+                        }
                     }
+                )
+            }
+        ) { paddingValues ->
+            LazyColumn(
+                modifier = Modifier
+                    .padding(paddingValues)
+                    .padding(
+                        top = 16.dp,
+                        start = 8.dp,
+                        end = 8.dp,
+                        bottom =  72.dp
+                    )
+            ) {
+                items(
+                    items = currentState.comments,
+                    key = { it.id }
+                ) { comment ->
+                    Comment(comment = comment)
                 }
-            )
-        }
-    ) { paddingValues ->
-        LazyColumn(
-            modifier = Modifier.padding(paddingValues)
-        ) {
-            items(
-                items = comments,
-                key = { it.id }
-            ) {comment ->
-                Comment(comment = comment)
             }
         }
     }

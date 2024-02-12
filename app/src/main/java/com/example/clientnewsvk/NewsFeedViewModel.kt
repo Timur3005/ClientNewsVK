@@ -3,21 +3,11 @@ package com.example.clientnewsvk
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.example.clientnewsvk.domain.CommentItem
 import com.example.clientnewsvk.domain.FeedPost
 import com.example.clientnewsvk.domain.HomeScreenState
 import com.example.clientnewsvk.domain.StatisticItem
-import com.example.clientnewsvk.ui.NavigationItem
 
-class MainViewModel : ViewModel() {
-
-    private val initComments = mutableListOf<CommentItem>().apply {
-        repeat(10){
-            add(
-                CommentItem(id = it)
-            )
-        }
-    }
+class NewsFeedViewModel : ViewModel() {
 
     private val initList = mutableListOf<FeedPost>().apply {
         repeat(10) {
@@ -33,8 +23,6 @@ class MainViewModel : ViewModel() {
 
     private val _screenState = MutableLiveData<HomeScreenState>(initState)
     val screenState: LiveData<HomeScreenState> = _screenState
-
-    private var previousState: HomeScreenState? = initState
 
     fun updateStatisticList(
         statistic: StatisticItem,
@@ -80,14 +68,5 @@ class MainViewModel : ViewModel() {
 
         newPosts.remove(feedPost)
         _screenState.value = HomeScreenState.Posts(newPosts)
-    }
-
-    fun showComments(feedPost: FeedPost, comments: List<CommentItem> = initComments){
-        previousState = _screenState.value
-        _screenState.value = HomeScreenState.Comments(feedPost, comments)
-    }
-
-    fun closeComments(){
-        _screenState.value = previousState ?: initState
     }
 }

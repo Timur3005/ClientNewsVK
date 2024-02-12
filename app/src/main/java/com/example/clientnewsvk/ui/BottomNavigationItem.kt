@@ -7,24 +7,24 @@ import androidx.compose.material.icons.outlined.Person
 import androidx.compose.ui.graphics.vector.ImageVector
 import com.example.clientnewsvk.R
 
-sealed class NavigationItem(
+sealed class BottomNavigationItem(
     val screen: ScreensNavigation,
     val nameId: Int,
     val imageVector: ImageVector,
 ) {
-    data object Main : NavigationItem(
+    data object Main : BottomNavigationItem(
         ScreensNavigation.Main,
         R.string.main_screen,
         Icons.Outlined.Home
     )
 
-    data object Favourite : NavigationItem(
+    data object Favourite : BottomNavigationItem(
         ScreensNavigation.Favourite,
         R.string.favourite,
         Icons.Outlined.Favorite
     )
 
-    data object Profile : NavigationItem(
+    data object Profile : BottomNavigationItem(
         ScreensNavigation.Profile,
         R.string.profile,
         Icons.Outlined.Person

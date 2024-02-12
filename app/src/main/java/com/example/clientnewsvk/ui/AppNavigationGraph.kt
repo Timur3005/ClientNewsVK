@@ -8,7 +8,8 @@ import androidx.navigation.compose.composable
 @Composable
 fun AppNavigationGraph(
     navController: NavHostController,
-    mainScreen: @Composable () -> Unit,
+    newsFeedScreen: @Composable () -> Unit,
+    commentsScreen: @Composable () -> Unit,
     favouriteScreen: @Composable () -> Unit,
     profileScreen: @Composable () -> Unit
 ) {
@@ -16,9 +17,7 @@ fun AppNavigationGraph(
         navController = navController,
         startDestination = ScreensNavigation.Main.route
     ){
-        composable(ScreensNavigation.Main.route){
-            mainScreen()
-        }
+        mainScreenNavigationGraph(newsFeedScreen, commentsScreen)
         composable(ScreensNavigation.Favourite.route){
             favouriteScreen()
         }

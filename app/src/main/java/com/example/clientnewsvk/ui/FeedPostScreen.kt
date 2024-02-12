@@ -1,6 +1,5 @@
 package com.example.clientnewsvk.ui
 
-import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.PaddingValues
@@ -15,46 +14,41 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.example.clientnewsvk.MainViewModel
+import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.clientnewsvk.NewsFeedViewModel
 import com.example.clientnewsvk.domain.FeedPost
 import com.example.clientnewsvk.domain.HomeScreenState
 import com.example.clientnewsvk.domain.StatisticItem
 
 @Composable
-fun HomeScreen(
-    viewModel: MainViewModel,
+fun FeedPostScreen(
     paddingValues: PaddingValues,
-    onPostSwipedEndToStart: (FeedPost) -> Unit,
-    onSharesClickListener: (StatisticItem, FeedPost) -> Unit,
-    onCommentClickListener: (StatisticItem, FeedPost) -> Unit,
-    onLikesClickListener: (StatisticItem, FeedPost) -> Unit,
-    onViewsClickListener: (StatisticItem, FeedPost) -> Unit
+    onCommentClickListener: (StatisticItem, FeedPost) -> Unit
 ) {
+    val viewModel: NewsFeedViewModel = viewModel()
     val vmState = viewModel.screenState.observeAsState(HomeScreenState.Initial)
 
     when (val state = vmState.value){
-        is HomeScreenState.Comments -> {
-            CommentsScreen(
-                post = state.feedPost,
-                comments = state.comments,
-                navigationClickListener = {
-                    viewModel.closeComments()
-                }
-            )
-            BackHandler {
-                viewModel.closeComments()
-            }
+        HomeScreenState.Initial -> {
+
         }
-        HomeScreenState.Initial -> {}
         is HomeScreenState.Posts -> {
             FeedPosts(
-                paddingValues,
-                state.posts,
-                onPostSwipedEndToStart,
-                onSharesClickListener,
-                onCommentClickListener,
-                onLikesClickListener,
-                onViewsClickListener
+                paddingValues = paddingValues,
+                posts = state.posts,
+                onCommentClickListener = onCommentClickListener,
+                onPostSwipedEndToStart = {
+                    viewModel.deleteItem(it)
+                },
+                onSharesClickListener = { statistic, post ->
+                    viewModel.updateStatisticList(statistic, post)
+                },
+                onLikesClickListener = {statistic, post ->
+                    viewModel.updateStatisticList(statistic, post)
+                },
+                onViewsClickListener = {statistic, post ->
+                    viewModel.updateStatisticList(statistic, post)
+                }
             )
         }
     }
