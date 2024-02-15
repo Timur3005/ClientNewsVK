@@ -1,6 +1,7 @@
 package com.example.clientnewsvk.ui
 
-import android.annotation.SuppressLint
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.padding
@@ -19,11 +20,12 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.compose.currentBackStackEntryAsState
 import com.example.clientnewsvk.domain.FeedPost
 import com.example.clientnewsvk.rememberNavigationState
 
-@SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
+@RequiresApi(Build.VERSION_CODES.TIRAMISU)
 @Composable
 fun MainScreen() {
     val listItem = listOf(
@@ -39,12 +41,19 @@ fun MainScreen() {
         bottomBar = {
             NavigationBar {
                 listItem.forEach { navigationItem ->
+                    val selected = navState
+                        .navController
+                        .currentBackStackEntryAsState()
+                        .value?.destination?.hierarchy
+                        ?.any {
+                            it.route == navigationItem.screen.route
+                        } ?: false
                     NavigationBarItem(
-                        selected =
-                        navState.navController.currentBackStackEntryAsState()
-                            .value?.destination?.route == navigationItem.screen.route,
+                        selected = selected,
                         onClick = {
-                            navState.navigateTo(navigationItem.screen.route)
+                            if (!selected) {
+                                navState.navigateTo(navigationItem.screen.route)
+                            }
                         },
                         icon = {
                             Icon(navigationItem.imageVector, contentDescription = null)
@@ -68,22 +77,25 @@ fun MainScreen() {
             newsFeedScreen = {
                 FeedPostScreen(
                     paddingValues = paddingValues,
-                    onCommentClickListener = { _, post ->
-                        commentToPostState.value = post
-                        navState.navigateTo(ScreensNavigation.Comments.route)
+                    onCommentClickListener = { _, feedPost ->
+                        navState.navigateToComments(feedPost)
                     }
                 )
             },
-            commentsScreen = {
+            commentsScreen = { feedPost ->
                 CommentsScreen(
                     navigationClickListener = {
-                        navState.navigateTo(ScreensNavigation.NewsFeed.route)
+                        navState.navController.popBackStack()
                     },
-                    feedPost = commentToPostState.value!!
+                    feedPost = feedPost
                 )
             },
-            favouriteScreen = { TextCounter(item = BottomNavigationItem.Favourite, paddingValues) },
-            profileScreen = { TextCounter(item = BottomNavigationItem.Profile, paddingValues) }
+            favouriteScreen = {
+                TextCounter(item = BottomNavigationItem.Favourite, paddingValues)
+            },
+            profileScreen = {
+                TextCounter(item = BottomNavigationItem.Profile, paddingValues)
+            }
         )
     }
 }

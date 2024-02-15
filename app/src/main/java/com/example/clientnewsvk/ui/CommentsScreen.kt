@@ -49,7 +49,10 @@ fun CommentsScreen(
             topBar = {
                 TopAppBar(
                     title = {
-                        Text(text = "Comments For Feed Post with id: ${currentState.post.id}")
+                        Text(
+                            text = "Comments For Feed Post with id: ${currentState.post.id} " +
+                                    "and Text: ${currentState.post.text}"
+                        )
                     },
                     navigationIcon = {
                         IconButton(onClick = { navigationClickListener() }) {
@@ -66,7 +69,7 @@ fun CommentsScreen(
                         top = 16.dp,
                         start = 8.dp,
                         end = 8.dp,
-                        bottom =  72.dp
+                        bottom = 72.dp
                     )
             ) {
                 items(
