@@ -3,4 +3,5 @@
     <string name="main_screen">Главная</string>
     <string name="favourite">Избранное</string>
     <string name="profile">Профиль</string>
+    <integer name="com_vk_sdk_AppId">51859199</integer>
 </resources>
