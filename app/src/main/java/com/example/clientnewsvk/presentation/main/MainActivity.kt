@@ -1,4 +1,4 @@
-package com.example.clientnewsvk
+package com.example.clientnewsvk.presentation.main
 
 import android.os.Build
 import android.os.Bundle
@@ -10,11 +10,11 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Modifier
-import com.example.clientnewsvk.ui.MainScreen
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.clientnewsvk.ui.theme.ClientNewsVKTheme
 import com.vk.api.sdk.VK
-import com.vk.api.sdk.auth.VKAuthenticationResult
 import com.vk.api.sdk.auth.VKScope
 
 class MainActivity : ComponentActivity() {
@@ -30,17 +30,30 @@ class MainActivity : ComponentActivity() {
                         .fillMaxSize()
                         .background(MaterialTheme.colorScheme.background)
                 ) {
+                    val viewModel: AuthViewModel = viewModel()
+                    val screenState =
+                        viewModel.authState.observeAsState(initial = AuthState.Initial)
                     val launcher = rememberLauncherForActivityResult(
                         contract = VK.getVKAuthActivityResultContract(),
                         onResult = {
-                            when (it) {
-                                is VKAuthenticationResult.Failed -> TODO()
-                                is VKAuthenticationResult.Success -> TODO()
-                            }
+                            viewModel.performedAuthState(it)
                         }
                     )
-                    launcher.launch(listOf(VKScope.WALL))
-                    MainScreen()
+                    when (screenState.value) {
+                        AuthState.Authorized -> {
+                            MainScreen()
+                        }
+
+                        AuthState.Initial -> {
+
+                        }
+
+                        AuthState.NotAuthorized -> {
+                            AuthScreen {
+                                launcher.launch(listOf(VKScope.WALL))
+                            }
+                        }
+                    }
                 }
             }
         }

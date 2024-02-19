@@ -1,4 +1,4 @@
-package com.example.clientnewsvk.ui
+package com.example.clientnewsvk.presentation.news
 
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.Arrangement
@@ -15,9 +15,8 @@ import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.example.clientnewsvk.NewsFeedViewModel
 import com.example.clientnewsvk.domain.FeedPost
-import com.example.clientnewsvk.domain.HomeScreenState
+import com.example.clientnewsvk.presentation.main.HomeScreenState
 import com.example.clientnewsvk.domain.StatisticItem
 
 @Composable

@@ -1,16 +1,14 @@
-package com.example.clientnewsvk.ui
+package com.example.clientnewsvk.navigation
 
 import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavGraphBuilder
-import androidx.navigation.NavType
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import androidx.navigation.navigation
 import com.example.clientnewsvk.domain.FeedPost
-import com.example.clientnewsvk.ui.ScreensNavigation.Companion.KEY_FEED_POST
-import com.google.gson.Gson
+import com.example.clientnewsvk.navigation.ScreensNavigation.Companion.KEY_FEED_POST
 
 @RequiresApi(Build.VERSION_CODES.TIRAMISU)
 fun NavGraphBuilder.mainScreenNavigationGraph(

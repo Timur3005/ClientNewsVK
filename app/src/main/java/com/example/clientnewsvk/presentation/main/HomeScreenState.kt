@@ -1,4 +1,6 @@
-package com.example.clientnewsvk.domain
+package com.example.clientnewsvk.presentation.main
+
+import com.example.clientnewsvk.domain.FeedPost
 
 sealed interface HomeScreenState {
     data object Initial: HomeScreenState

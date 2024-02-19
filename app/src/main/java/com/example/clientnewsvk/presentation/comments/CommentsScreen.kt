@@ -1,4 +1,4 @@
-package com.example.clientnewsvk.ui
+package com.example.clientnewsvk.presentation.comments
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Column
@@ -27,10 +27,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.example.clientnewsvk.CommentsViewModel
-import com.example.clientnewsvk.CommentsViewModelFactory
 import com.example.clientnewsvk.domain.CommentItem
-import com.example.clientnewsvk.domain.CommentsScreenState
 import com.example.clientnewsvk.domain.FeedPost
 
 @OptIn(ExperimentalMaterial3Api::class)

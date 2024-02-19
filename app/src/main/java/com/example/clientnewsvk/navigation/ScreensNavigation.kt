@@ -1,4 +1,4 @@
-package com.example.clientnewsvk.ui
+package com.example.clientnewsvk.navigation
 
 import android.net.Uri
 import com.example.clientnewsvk.domain.FeedPost

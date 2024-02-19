@@ -1,4 +1,4 @@
-package com.example.clientnewsvk.ui
+package com.example.clientnewsvk.presentation.news
 
 import android.util.Log
 import androidx.compose.foundation.Image

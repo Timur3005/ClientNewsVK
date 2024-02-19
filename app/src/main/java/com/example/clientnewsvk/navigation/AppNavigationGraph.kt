@@ -1,4 +1,4 @@
-package com.example.clientnewsvk.ui
+package com.example.clientnewsvk.navigation
 
 import android.os.Build
 import androidx.annotation.RequiresApi

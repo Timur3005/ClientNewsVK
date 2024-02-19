@@ -1,4 +1,7 @@
-package com.example.clientnewsvk.domain
+package com.example.clientnewsvk.presentation.comments
+
+import com.example.clientnewsvk.domain.CommentItem
+import com.example.clientnewsvk.domain.FeedPost
 
 sealed interface CommentsScreenState {
     data object Initial: CommentsScreenState

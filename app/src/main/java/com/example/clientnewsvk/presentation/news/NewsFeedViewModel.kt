@@ -1,10 +1,10 @@
-package com.example.clientnewsvk
+package com.example.clientnewsvk.presentation.news
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.example.clientnewsvk.domain.FeedPost
-import com.example.clientnewsvk.domain.HomeScreenState
+import com.example.clientnewsvk.presentation.main.HomeScreenState
 import com.example.clientnewsvk.domain.StatisticItem
 
 class NewsFeedViewModel : ViewModel() {

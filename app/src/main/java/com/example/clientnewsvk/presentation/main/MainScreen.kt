@@ -1,4 +1,4 @@
-package com.example.clientnewsvk.ui
+package com.example.clientnewsvk.presentation.main
 
 import android.os.Build
 import androidx.annotation.RequiresApi
@@ -23,7 +23,11 @@ import androidx.compose.ui.res.stringResource
 import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.compose.currentBackStackEntryAsState
 import com.example.clientnewsvk.domain.FeedPost
-import com.example.clientnewsvk.rememberNavigationState
+import com.example.clientnewsvk.presentation.news.rememberNavigationState
+import com.example.clientnewsvk.navigation.AppNavigationGraph
+import com.example.clientnewsvk.navigation.BottomNavigationItem
+import com.example.clientnewsvk.presentation.comments.CommentsScreen
+import com.example.clientnewsvk.presentation.news.FeedPostScreen
 
 @RequiresApi(Build.VERSION_CODES.TIRAMISU)
 @Composable

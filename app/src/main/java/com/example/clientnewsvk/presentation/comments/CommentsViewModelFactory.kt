@@ -1,4 +1,4 @@
-package com.example.clientnewsvk
+package com.example.clientnewsvk.presentation.comments
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider

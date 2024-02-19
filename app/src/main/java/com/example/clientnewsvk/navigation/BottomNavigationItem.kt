@@ -1,4 +1,4 @@
-package com.example.clientnewsvk.ui
+package com.example.clientnewsvk.navigation
 
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Favorite

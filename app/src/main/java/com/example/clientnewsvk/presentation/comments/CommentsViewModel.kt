@@ -1,10 +1,9 @@
-package com.example.clientnewsvk
+package com.example.clientnewsvk.presentation.comments
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.example.clientnewsvk.domain.CommentItem
-import com.example.clientnewsvk.domain.CommentsScreenState
 import com.example.clientnewsvk.domain.FeedPost
 
 class CommentsViewModel(
