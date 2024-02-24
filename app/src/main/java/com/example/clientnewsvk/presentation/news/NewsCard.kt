@@ -95,7 +95,7 @@ private fun Statistics(
     ) {
         Row(
             verticalAlignment = Alignment.CenterVertically,
-            modifier = Modifier
+            modifier = Modifier.weight(1f)
         ) {
             val viewsItem = statistics.findItemByType(StatisticType.VIEWS)
             IconWithText(R.drawable.ic_views_count, viewsItem) {
@@ -104,7 +104,7 @@ private fun Statistics(
         }
         Row(
             verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.End,
+            horizontalArrangement = Arrangement.SpaceEvenly,
             modifier = Modifier.weight(1f)
         ) {
             val shareItem = statistics.findItemByType(StatisticType.SHARES)
@@ -183,7 +183,10 @@ private fun IconWithText(
         text = reformatStatistic(statistic.count),
         color = MaterialTheme.colorScheme.onSecondary
     )
-    IconButton(onClick = { onIconClick() }) {
+    IconButton(
+        modifier = Modifier.size(30.dp),
+        onClick = { onIconClick() }
+    ) {
         Icon(
             painter = painterResource(id = iconId),
             contentDescription = "",
