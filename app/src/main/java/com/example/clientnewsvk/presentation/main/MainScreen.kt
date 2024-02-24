@@ -13,7 +13,6 @@ import androidx.compose.material3.NavigationBarItemDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -22,8 +21,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.compose.currentBackStackEntryAsState
-import com.example.clientnewsvk.domain.FeedPost
-import com.example.clientnewsvk.presentation.news.rememberNavigationState
+import com.example.clientnewsvk.navigation.rememberNavigationState
 import com.example.clientnewsvk.navigation.AppNavigationGraph
 import com.example.clientnewsvk.navigation.BottomNavigationItem
 import com.example.clientnewsvk.presentation.comments.CommentsScreen
@@ -38,9 +36,6 @@ fun MainScreen() {
         BottomNavigationItem.Profile
     )
     val navState = rememberNavigationState()
-    val commentToPostState: MutableState<FeedPost?> = rememberSaveable {
-        mutableStateOf(null)
-    }
     Scaffold(
         bottomBar = {
             NavigationBar {

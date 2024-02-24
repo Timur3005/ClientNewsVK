@@ -1,7 +1,6 @@
 package com.example.clientnewsvk.presentation.news
 
 import android.util.Log
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -22,9 +21,11 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
+import coil.compose.AsyncImage
 import com.example.clientnewsvk.R
 import com.example.clientnewsvk.domain.FeedPost
 import com.example.clientnewsvk.domain.StatisticItem
@@ -48,7 +49,6 @@ fun NewsCard(
             contentColor = MaterialTheme.colorScheme.onPrimary
         )
     ) {
-        Log.d("Recomposition", "Card")
         PostHeader(feedPost)
         Row(
             modifier = Modifier
@@ -59,8 +59,8 @@ fun NewsCard(
                 text = feedPost.text
             )
         }
-        Image(
-            painter = painterResource(feedPost.imageId),
+        AsyncImage(
+            model = feedPost.imageUrl,
             contentDescription = "",
             modifier = Modifier
                 .fillMaxWidth()
@@ -72,7 +72,8 @@ fun NewsCard(
             onViewsClickListener = onViewsClickListener,
             onLikesClickListener = onLikesClickListener,
             onCommentClickListener = onCommentClickListener,
-            onSharesClickListener = onSharesClickListener
+            onSharesClickListener = onSharesClickListener,
+            isFavourite = feedPost.isFavourite
         )
     }
 }
@@ -83,9 +84,9 @@ private fun Statistics(
     onViewsClickListener: (StatisticItem) -> Unit,
     onSharesClickListener: (StatisticItem) -> Unit,
     onCommentClickListener: (StatisticItem) -> Unit,
-    onLikesClickListener: (StatisticItem) -> Unit
+    onLikesClickListener: (StatisticItem) -> Unit,
+    isFavourite: Boolean,
 ) {
-    Log.d("Recomposition", "Statistics")
     Row(
         horizontalArrangement = Arrangement.SpaceBetween,
         modifier = Modifier
@@ -94,7 +95,7 @@ private fun Statistics(
     ) {
         Row(
             verticalAlignment = Alignment.CenterVertically,
-            modifier = Modifier.weight(1f)
+            modifier = Modifier
         ) {
             val viewsItem = statistics.findItemByType(StatisticType.VIEWS)
             IconWithText(R.drawable.ic_views_count, viewsItem) {
@@ -103,7 +104,7 @@ private fun Statistics(
         }
         Row(
             verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.SpaceBetween,
+            horizontalArrangement = Arrangement.End,
             modifier = Modifier.weight(1f)
         ) {
             val shareItem = statistics.findItemByType(StatisticType.SHARES)
@@ -115,7 +116,19 @@ private fun Statistics(
                 onCommentClickListener(commentItem)
             }
             val likesItem = statistics.findItemByType(StatisticType.LIKES)
-            IconWithText(R.drawable.ic_like, likesItem) {
+            IconWithText(
+                iconId = if (isFavourite) {
+                    R.drawable.ic_like_set
+                } else {
+                    R.drawable.ic_like
+                },
+                statistic = likesItem,
+                iconTint = if (isFavourite) {
+                    Color.Red
+                } else {
+                    MaterialTheme.colorScheme.onSecondary
+                }
+            ) {
                 onLikesClickListener(likesItem)
             }
         }
@@ -128,15 +141,15 @@ private fun List<StatisticItem>.findItemByType(type: StatisticType): StatisticIt
 
 @Composable
 private fun PostHeader(feedPost: FeedPost) {
-    Log.d("Recomposition", "PostHeader")
+    Log.d("PostHeader", "$feedPost")
     Row(
         verticalAlignment = Alignment.CenterVertically,
         modifier = Modifier
             .fillMaxWidth()
             .padding(7.dp)
     ) {
-        Image(
-            painter = painterResource(feedPost.iconId),
+        AsyncImage(
+            model = feedPost.iconUrl,
             contentDescription = "",
             contentScale = ContentScale.Fit,
             modifier = Modifier
@@ -163,10 +176,11 @@ private fun PostHeader(feedPost: FeedPost) {
 private fun IconWithText(
     iconId: Int,
     statistic: StatisticItem,
+    iconTint: Color = MaterialTheme.colorScheme.onSecondary,
     onIconClick: () -> Unit,
 ) {
     Text(
-        text = statistic.count.toString(),
+        text = reformatStatistic(statistic.count),
         color = MaterialTheme.colorScheme.onSecondary
     )
     IconButton(onClick = { onIconClick() }) {
@@ -174,7 +188,17 @@ private fun IconWithText(
             painter = painterResource(id = iconId),
             contentDescription = "",
             modifier = Modifier.padding(end = 7.dp),
-            tint = MaterialTheme.colorScheme.onSecondary
+            tint = iconTint
         )
+    }
+}
+
+private fun reformatStatistic(count: Long): String {
+    return if (count > 100000) {
+        String.format("%sK", (count / 1000))
+    } else if (count in 1001..100000) {
+        String.format("%.1fK", (count / 1000f))
+    } else {
+        count.toString()
     }
 }

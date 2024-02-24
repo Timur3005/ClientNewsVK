@@ -1,4 +1,4 @@
-package com.example.clientnewsvk.presentation.news
+package com.example.clientnewsvk.navigation
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
@@ -6,7 +6,6 @@ import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.example.clientnewsvk.domain.FeedPost
-import com.example.clientnewsvk.navigation.ScreensNavigation
 
 class NavigationState(
     val navController: NavHostController,

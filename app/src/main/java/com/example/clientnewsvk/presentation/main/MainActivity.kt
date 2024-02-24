@@ -21,8 +21,6 @@ class MainActivity : ComponentActivity() {
     @RequiresApi(Build.VERSION_CODES.TIRAMISU)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
-
         setContent {
             ClientNewsVKTheme {
                 Box(
@@ -45,12 +43,12 @@ class MainActivity : ComponentActivity() {
                         }
 
                         AuthState.Initial -> {
-
+                            Box{}
                         }
 
                         AuthState.NotAuthorized -> {
                             AuthScreen {
-                                launcher.launch(listOf(VKScope.WALL))
+                                launcher.launch(listOf(VKScope.WALL, VKScope.FRIENDS))
                             }
                         }
                     }

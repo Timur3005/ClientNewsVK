@@ -2,6 +2,7 @@ package com.example.clientnewsvk.presentation.news
 
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
@@ -29,7 +30,7 @@ fun FeedPostScreen(
 
     when (val state = vmState.value){
         HomeScreenState.Initial -> {
-
+            Box{}
         }
         is HomeScreenState.Posts -> {
             FeedPosts(
@@ -42,8 +43,8 @@ fun FeedPostScreen(
                 onSharesClickListener = { statistic, post ->
                     viewModel.updateStatisticList(statistic, post)
                 },
-                onLikesClickListener = {statistic, post ->
-                    viewModel.updateStatisticList(statistic, post)
+                onLikesClickListener = { statistic, post ->
+                    viewModel.likePost(post, statistic)
                 },
                 onViewsClickListener = {statistic, post ->
                     viewModel.updateStatisticList(statistic, post)
@@ -90,17 +91,17 @@ private fun FeedPosts(
                 dismissContent = {
                     NewsCard(
                         feedPost = post,
-                        onSharesClickListener = {
-                            onSharesClickListener(it, post)
-                        },
-                        onCommentClickListener = {
-                            onCommentClickListener(it, post)
-                        },
-                        onLikesClickListener = {
-                            onLikesClickListener(it, post)
-                        },
-                        onViewsClickListener = {
-                            onViewsClickListener(it, post)
+                            onSharesClickListener = {
+                                onSharesClickListener(it, post)
+                            },
+                            onCommentClickListener = {
+                                onCommentClickListener(it, post)
+                            },
+                            onLikesClickListener = {
+                                onLikesClickListener(it, post)
+                            },
+                            onViewsClickListener = {
+                                onViewsClickListener(it, post)
                         }
                     )
                 }

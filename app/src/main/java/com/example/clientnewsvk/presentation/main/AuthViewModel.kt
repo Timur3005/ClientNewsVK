@@ -1,13 +1,19 @@
 package com.example.clientnewsvk.presentation.main
 
 import android.app.Application
+import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.viewModelScope
+import com.example.clientnewsvk.data.network.ApiFactory
 import com.vk.api.sdk.VK
 import com.vk.api.sdk.VKPreferencesKeyValueStorage
 import com.vk.api.sdk.auth.VKAccessToken
 import com.vk.api.sdk.auth.VKAuthenticationResult
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 class AuthViewModel(application: Application) : AndroidViewModel(application) {
 
@@ -15,8 +21,6 @@ class AuthViewModel(application: Application) : AndroidViewModel(application) {
     val authState: LiveData<AuthState> = _authState
 
     init {
-        val storage = VKPreferencesKeyValueStorage(application)
-        val token = VKAccessToken.restore(storage)
         _authState.value = if (VK.isLoggedIn()) AuthState.Authorized else AuthState.NotAuthorized
     }
 

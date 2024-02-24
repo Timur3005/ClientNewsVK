@@ -1,7 +1,5 @@
 package com.example.clientnewsvk.navigation
 
-import android.os.Build
-import androidx.annotation.RequiresApi
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
@@ -10,7 +8,6 @@ import androidx.navigation.navigation
 import com.example.clientnewsvk.domain.FeedPost
 import com.example.clientnewsvk.navigation.ScreensNavigation.Companion.KEY_FEED_POST
 
-@RequiresApi(Build.VERSION_CODES.TIRAMISU)
 fun NavGraphBuilder.mainScreenNavigationGraph(
     newsFeedScreen: @Composable () -> Unit,
     commentsScreen: @Composable (FeedPost) -> Unit,
@@ -30,7 +27,8 @@ fun NavGraphBuilder.mainScreenNavigationGraph(
                 }
             )
         ) {
-            val feedPost = it.arguments?.getParcelable(KEY_FEED_POST, FeedPost::class.java) ?: throw RuntimeException("")
+            val feedPost: FeedPost =
+                it.arguments?.getParcelable(KEY_FEED_POST) ?: throw RuntimeException("")
             commentsScreen(feedPost)
         }
     }
