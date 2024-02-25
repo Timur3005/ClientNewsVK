@@ -72,7 +72,7 @@ fun NewsCard(
             onLikesClickListener = onLikesClickListener,
             onCommentClickListener = onCommentClickListener,
             onSharesClickListener = onSharesClickListener,
-            isLiked = feedPost.userLikes > 0
+            isLiked = feedPost.isLiked
         )
     }
 }

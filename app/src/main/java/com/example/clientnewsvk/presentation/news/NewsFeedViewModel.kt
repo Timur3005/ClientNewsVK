@@ -52,35 +52,21 @@ class NewsFeedViewModel(application: Application) : AndroidViewModel(application
     fun exchangeLikedStatus(post: FeedPost) {
         viewModelScope.launch {
             val newLikesCount = withContext(Dispatchers.IO) {
-                if (post.userLikes == 0L) {
+                if (!post.isLiked) {
                     newsFeedRepository.addLike(post)
                 } else {
                     newsFeedRepository.deleteLike(post)
                 }
             }
             val exchangeList = (_screenState.value as HomeScreenState.Posts).posts.toMutableList()
-            exchangeList.replaceAll { foundPost ->
-                if (foundPost.id == post.id) {
-                    foundPost.copy(
-                        userLikes = if (foundPost.userLikes > 0) {
-                            0
-                        } else {
-                            1
-                        },
-                        statistics = foundPost.statistics.toMutableList().apply {
-                            replaceAll { statisticItem ->
-                                if (statisticItem.type == StatisticType.LIKES) {
-                                    statisticItem.copy(count = newLikesCount)
-                                } else {
-                                    statisticItem
-                                }
-                            }
-                        }
-                    )
-                } else {
-                    foundPost
-                }
+            val newStat = post.statistics.toMutableList().apply {
+                removeIf { it.type == StatisticType.LIKES }
+                add(
+                    StatisticItem(StatisticType.LIKES, newLikesCount)
+                )
             }
+            val newPost = post.copy(statistics = newStat, isLiked = !post.isLiked)
+            exchangeList[exchangeList.indexOf(post)] = newPost
             _screenState.value = HomeScreenState.Posts(exchangeList)
         }
     }

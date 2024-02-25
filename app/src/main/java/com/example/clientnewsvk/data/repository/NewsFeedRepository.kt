@@ -5,8 +5,12 @@ import android.util.Log
 import com.example.clientnewsvk.data.Mapper
 import com.example.clientnewsvk.data.network.ApiFactory
 import com.example.clientnewsvk.domain.FeedPost
+import com.example.clientnewsvk.domain.StatisticItem
+import com.example.clientnewsvk.domain.StatisticType
 import com.vk.api.sdk.VKPreferencesKeyValueStorage
 import com.vk.api.sdk.auth.VKAccessToken
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 
 class NewsFeedRepository(
     private val application: Application,

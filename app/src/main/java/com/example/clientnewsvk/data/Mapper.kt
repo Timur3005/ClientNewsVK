@@ -37,7 +37,7 @@ class Mapper {
                             StatisticItem(StatisticType.COMMENTS, post.commentStatistic.count),
                             StatisticItem(StatisticType.LIKES, post.likeStatistic.count)
                         ),
-                        userLikes = post.likeStatistic.userLikes,
+                        isLiked = post.likeStatistic.userLikes > 0,
                         ownerId = abs(post.ownerId)
                     )
                 )

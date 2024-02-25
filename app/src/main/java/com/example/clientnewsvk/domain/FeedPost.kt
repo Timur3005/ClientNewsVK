@@ -9,18 +9,13 @@ import kotlinx.parcelize.Parcelize
 @Parcelize
 data class FeedPost(
     val id: Long,
-    val groupName: String = "уволено",
-    val time: String = "14:00",
+    val groupName: String,
+    val time: String,
     val iconUrl: String,
-    val text: String = "когда",
+    val text: String,
     val imageUrl: String?,
-    val statistics: List<StatisticItem> = listOf(
-        StatisticItem(StatisticType.VIEWS, 123),
-        StatisticItem(StatisticType.SHARES, 32),
-        StatisticItem(StatisticType.COMMENTS, 45),
-        StatisticItem(StatisticType.LIKES, 21)
-    ),
-    val userLikes: Long,
+    val statistics: List<StatisticItem>,
+    val isLiked: Boolean,
     val ownerId: Long
 ): Parcelable{
     companion object{
