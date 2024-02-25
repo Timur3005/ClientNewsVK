@@ -1,16 +1,12 @@
 package com.example.clientnewsvk.data.repository
 
 import android.app.Application
-import android.util.Log
 import com.example.clientnewsvk.data.Mapper
 import com.example.clientnewsvk.data.network.ApiFactory
 import com.example.clientnewsvk.domain.FeedPost
-import com.example.clientnewsvk.domain.StatisticItem
-import com.example.clientnewsvk.domain.StatisticType
 import com.vk.api.sdk.VKPreferencesKeyValueStorage
 import com.vk.api.sdk.auth.VKAccessToken
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.withContext
+import kotlinx.coroutines.delay
 
 class NewsFeedRepository(
     private val application: Application,
@@ -23,9 +19,17 @@ class NewsFeedRepository(
     val feedPosts: List<FeedPost>
         get() = _feedPosts
 
-    suspend fun loadRecommendation() {
-        val result =
+    private var nextFrom: String? = null
+
+    suspend fun loadRecommendations() {
+        if (nextFrom == null && _feedPosts.isNotEmpty()) return
+        val startFrom = nextFrom
+        val result = if (startFrom == null) {
             apiService.responseRecommendedFeedPosts(token = getToken())
+        }else{
+            apiService.responseRecommendedFeedPosts(token = getToken(), startFrom = startFrom)
+        }
+        nextFrom = result.wallResponseDto.nextFrom
         _feedPosts.addAll(mapper.mapWallContainerDtoToListFeedPost(result))
     }
 

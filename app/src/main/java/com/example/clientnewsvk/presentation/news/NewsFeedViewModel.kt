@@ -9,7 +9,6 @@ import com.example.clientnewsvk.data.repository.NewsFeedRepository
 import com.example.clientnewsvk.domain.FeedPost
 import com.example.clientnewsvk.domain.StatisticItem
 import com.example.clientnewsvk.domain.StatisticType
-import com.example.clientnewsvk.presentation.main.HomeScreenState
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -19,23 +18,37 @@ class NewsFeedViewModel(application: Application) : AndroidViewModel(application
     private val newsFeedRepository = NewsFeedRepository(application)
 
     init {
+        responseRecommendations()
+    }
+
+    fun loadRecommendations() {
+        _screenState.value = FeedPostsScreenState.Posts(
+            posts = newsFeedRepository.feedPosts,
+            isDownloading = true
+        )
+        responseRecommendations()
+    }
+
+    private fun responseRecommendations() {
         viewModelScope.launch {
             withContext(Dispatchers.IO) {
-                newsFeedRepository.loadRecommendation()
+                newsFeedRepository.loadRecommendations()
             }
-            _screenState.value = HomeScreenState.Posts(newsFeedRepository.feedPosts)
+            _screenState.value = FeedPostsScreenState.Posts(
+                posts = newsFeedRepository.feedPosts
+            )
         }
     }
 
-    private val _screenState = MutableLiveData<HomeScreenState>(HomeScreenState.Initial)
-    val screenState: LiveData<HomeScreenState> = _screenState
+    private val _screenState = MutableLiveData<FeedPostsScreenState>(FeedPostsScreenState.Initial)
+    val screenState: LiveData<FeedPostsScreenState> = _screenState
 
     fun updateStatisticList(
         statistic: StatisticItem,
         post: FeedPost,
     ) {
         val state = _screenState.value
-        if (state !is HomeScreenState.Posts) return
+        if (state !is FeedPostsScreenState.Posts) return
 
         val oldPosts = state.posts
         val newPosts = oldPosts.toMutableList()
@@ -46,7 +59,7 @@ class NewsFeedViewModel(application: Application) : AndroidViewModel(application
                 it
             }
         }
-        _screenState.value = HomeScreenState.Posts(newPosts)
+        _screenState.value = FeedPostsScreenState.Posts(newPosts)
     }
 
     fun exchangeLikedStatus(post: FeedPost) {
@@ -58,7 +71,7 @@ class NewsFeedViewModel(application: Application) : AndroidViewModel(application
                     newsFeedRepository.deleteLike(post)
                 }
             }
-            val exchangeList = (_screenState.value as HomeScreenState.Posts).posts.toMutableList()
+            val exchangeList = (_screenState.value as FeedPostsScreenState.Posts).posts.toMutableList()
             val newStat = post.statistics.toMutableList().apply {
                 removeIf { it.type == StatisticType.LIKES }
                 add(
@@ -67,7 +80,7 @@ class NewsFeedViewModel(application: Application) : AndroidViewModel(application
             }
             val newPost = post.copy(statistics = newStat, isLiked = !post.isLiked)
             exchangeList[exchangeList.indexOf(post)] = newPost
-            _screenState.value = HomeScreenState.Posts(exchangeList)
+            _screenState.value = FeedPostsScreenState.Posts(exchangeList)
         }
     }
 
@@ -89,12 +102,12 @@ class NewsFeedViewModel(application: Application) : AndroidViewModel(application
     fun deleteItem(feedPost: FeedPost) {
 
         val state = _screenState.value
-        if (state !is HomeScreenState.Posts) return
+        if (state !is FeedPostsScreenState.Posts) return
 
         val oldPosts = state.posts
         val newPosts = oldPosts.toMutableList()
 
         newPosts.remove(feedPost)
-        _screenState.value = HomeScreenState.Posts(newPosts)
+        _screenState.value = FeedPostsScreenState.Posts(newPosts)
     }
 }

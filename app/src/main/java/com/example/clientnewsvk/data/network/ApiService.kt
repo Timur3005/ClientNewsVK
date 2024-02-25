@@ -13,6 +13,13 @@ interface ApiService {
         @Query("access_token") token: String
     ): WallResponseContainerDto
 
+    @GET("$NAME_OF_GET_RECOMMENDED_FEED_POSTS_METHOD?")
+    suspend fun responseRecommendedFeedPosts(
+        @Query("v") version: String = API_VERSION,
+        @Query("access_token") token: String,
+        @Query("start_from") startFrom: String
+    ): WallResponseContainerDto
+
     @GET("$NAME_OF_ADD_LIKE?")
     suspend fun addLike(
         @Query("v") version: String = API_VERSION,
