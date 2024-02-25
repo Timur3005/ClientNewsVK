@@ -12,5 +12,6 @@ data class FeedPostDto(
     @SerializedName("text") val bodyText: String,
     @SerializedName("reposts") val repostStatistic: RepostStatisticDto,
     @SerializedName("views") val viewStatistic: ViewStatisticDto,
-    @SerializedName("attachments") val attachments: List<AttachmentsDto>?
+    @SerializedName("attachments") val attachments: List<AttachmentsDto>?,
+    @SerializedName("owner_id") val ownerId: Long
 )

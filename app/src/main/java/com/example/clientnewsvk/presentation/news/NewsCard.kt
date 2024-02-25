@@ -1,6 +1,5 @@
 package com.example.clientnewsvk.presentation.news
 
-import android.util.Log
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -73,7 +72,7 @@ fun NewsCard(
             onLikesClickListener = onLikesClickListener,
             onCommentClickListener = onCommentClickListener,
             onSharesClickListener = onSharesClickListener,
-            isFavourite = feedPost.isFavourite
+            isLiked = feedPost.userLikes > 0
         )
     }
 }
@@ -85,7 +84,7 @@ private fun Statistics(
     onSharesClickListener: (StatisticItem) -> Unit,
     onCommentClickListener: (StatisticItem) -> Unit,
     onLikesClickListener: (StatisticItem) -> Unit,
-    isFavourite: Boolean,
+    isLiked: Boolean,
 ) {
     Row(
         horizontalArrangement = Arrangement.SpaceBetween,
@@ -117,13 +116,13 @@ private fun Statistics(
             }
             val likesItem = statistics.findItemByType(StatisticType.LIKES)
             IconWithText(
-                iconId = if (isFavourite) {
+                iconId = if (isLiked) {
                     R.drawable.ic_like_set
                 } else {
                     R.drawable.ic_like
                 },
                 statistic = likesItem,
-                iconTint = if (isFavourite) {
+                iconTint = if (isLiked) {
                     Color.Red
                 } else {
                     MaterialTheme.colorScheme.onSecondary
@@ -141,7 +140,6 @@ private fun List<StatisticItem>.findItemByType(type: StatisticType): StatisticIt
 
 @Composable
 private fun PostHeader(feedPost: FeedPost) {
-    Log.d("PostHeader", "$feedPost")
     Row(
         verticalAlignment = Alignment.CenterVertically,
         modifier = Modifier

@@ -43,8 +43,8 @@ fun FeedPostScreen(
                 onSharesClickListener = { statistic, post ->
                     viewModel.updateStatisticList(statistic, post)
                 },
-                onLikesClickListener = { statistic, post ->
-                    viewModel.likePost(post, statistic)
+                onLikesClickListener = { _, post ->
+                    viewModel.exchangeLikedStatus(post)
                 },
                 onViewsClickListener = {statistic, post ->
                     viewModel.updateStatisticList(statistic, post)

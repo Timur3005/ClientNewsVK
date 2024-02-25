@@ -1,33 +1,29 @@
 package com.example.clientnewsvk.presentation.news
 
 import android.app.Application
-import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
-import com.example.clientnewsvk.data.Mapper
-import com.example.clientnewsvk.data.network.ApiFactory
+import com.example.clientnewsvk.data.repository.NewsFeedRepository
 import com.example.clientnewsvk.domain.FeedPost
 import com.example.clientnewsvk.domain.StatisticItem
+import com.example.clientnewsvk.domain.StatisticType
 import com.example.clientnewsvk.presentation.main.HomeScreenState
-import com.vk.api.sdk.VKPreferencesKeyValueStorage
-import com.vk.api.sdk.auth.VKAccessToken
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 class NewsFeedViewModel(application: Application) : AndroidViewModel(application) {
+
+    private val newsFeedRepository = NewsFeedRepository(application)
+
     init {
-        val storage = VKPreferencesKeyValueStorage(application)
-        val token = VKAccessToken.restore(storage)
         viewModelScope.launch {
-            val accessToken = token?.accessToken ?: ""
-            if (accessToken.isNotBlank()) {
-                val posts = Mapper().mapWallContainerDtoToListFeedPost(
-                    ApiFactory.apiService.responseRecommendedFeedPosts(token = accessToken)
-                )
-                Log.d("NewsFeedViewModel", "$posts")
-                _screenState.value = HomeScreenState.Posts(posts)
+            withContext(Dispatchers.IO) {
+                newsFeedRepository.loadRecommendation()
             }
+            _screenState.value = HomeScreenState.Posts(newsFeedRepository.feedPosts)
         }
     }
 
@@ -53,19 +49,40 @@ class NewsFeedViewModel(application: Application) : AndroidViewModel(application
         _screenState.value = HomeScreenState.Posts(newPosts)
     }
 
-    fun likePost(post: FeedPost, statistic: StatisticItem) {
-        val exchangeList = (_screenState.value as HomeScreenState.Posts).posts.toMutableList()
-        exchangeList.replaceAll {
-            if (it.id == post.id) {
-                it.copy(
-                    isFavourite = !it.isFavourite,
-                    statistics = updateStatistic(statistic, it.statistics)
-                )
-            } else {
-                it
+    fun exchangeLikedStatus(post: FeedPost) {
+        viewModelScope.launch {
+            val newLikesCount = withContext(Dispatchers.IO) {
+                if (post.userLikes == 0L) {
+                    newsFeedRepository.addLike(post)
+                } else {
+                    newsFeedRepository.deleteLike(post)
+                }
             }
+            val exchangeList = (_screenState.value as HomeScreenState.Posts).posts.toMutableList()
+            exchangeList.replaceAll { foundPost ->
+                if (foundPost.id == post.id) {
+                    foundPost.copy(
+                        userLikes = if (foundPost.userLikes > 0) {
+                            0
+                        } else {
+                            1
+                        },
+                        statistics = foundPost.statistics.toMutableList().apply {
+                            replaceAll { statisticItem ->
+                                if (statisticItem.type == StatisticType.LIKES) {
+                                    statisticItem.copy(count = newLikesCount)
+                                } else {
+                                    statisticItem
+                                }
+                            }
+                        }
+                    )
+                } else {
+                    foundPost
+                }
+            }
+            _screenState.value = HomeScreenState.Posts(exchangeList)
         }
-        _screenState.value = HomeScreenState.Posts(exchangeList)
     }
 
     private fun updateStatistic(

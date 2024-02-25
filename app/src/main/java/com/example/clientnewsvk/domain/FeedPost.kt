@@ -20,7 +20,8 @@ data class FeedPost(
         StatisticItem(StatisticType.COMMENTS, 45),
         StatisticItem(StatisticType.LIKES, 21)
     ),
-    val isFavourite: Boolean = false,
+    val userLikes: Long,
+    val ownerId: Long
 ): Parcelable{
     companion object{
         val NavigationType = object : NavType<FeedPost>(false){
