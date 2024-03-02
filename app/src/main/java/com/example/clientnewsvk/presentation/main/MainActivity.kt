@@ -10,9 +10,11 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.clientnewsvk.domain.AuthState
 import com.example.clientnewsvk.ui.theme.ClientNewsVKTheme
 import com.vk.api.sdk.VK
 import com.vk.api.sdk.auth.VKScope
@@ -30,11 +32,11 @@ class MainActivity : ComponentActivity() {
                 ) {
                     val viewModel: AuthViewModel = viewModel()
                     val screenState =
-                        viewModel.authState.observeAsState(initial = AuthState.Initial)
+                        viewModel.authState.collectAsState(initial = AuthState.Initial)
                     val launcher = rememberLauncherForActivityResult(
                         contract = VK.getVKAuthActivityResultContract(),
                         onResult = {
-                            viewModel.performedAuthState(it)
+                            viewModel.getAuthState()
                         }
                     )
                     when (screenState.value) {

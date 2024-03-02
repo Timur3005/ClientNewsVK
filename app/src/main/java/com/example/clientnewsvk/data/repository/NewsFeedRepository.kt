@@ -1,19 +1,21 @@
 package com.example.clientnewsvk.data.repository
 
 import android.app.Application
-import androidx.compose.ui.res.stringArrayResource
 import com.example.clientnewsvk.data.Mapper
 import com.example.clientnewsvk.data.network.ApiFactory
-import com.example.clientnewsvk.domain.CommentItem
+import com.example.clientnewsvk.domain.AuthState
 import com.example.clientnewsvk.domain.FeedPost
 import com.example.clientnewsvk.domain.StatisticItem
 import com.example.clientnewsvk.domain.StatisticType
 import com.example.clientnewsvk.mergeWith
+import com.vk.api.sdk.VK
 import com.vk.api.sdk.VKPreferencesKeyValueStorage
 import com.vk.api.sdk.auth.VKAccessToken
+import com.vk.api.sdk.auth.VKAuthenticationResult
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.flow
@@ -26,7 +28,8 @@ class NewsFeedRepository(
     application: Application,
 ) {
     private val storage = VKPreferencesKeyValueStorage(application)
-    private val token = VKAccessToken.restore(storage)
+    private val token
+        get() = VKAccessToken.restore(storage)
 
     private val coroutineScope = CoroutineScope(Dispatchers.Default)
     private val apiService = ApiFactory.apiService
@@ -137,5 +140,17 @@ class NewsFeedRepository(
         val postIndex = _feedPosts.indexOf(feedPost)
         _feedPosts[postIndex] = newPost
         refreshedListFlow.emit(feedPosts)
+    }
+
+    val authFlow = MutableStateFlow<AuthState>(AuthState.Initial)
+
+    suspend fun responseAuthStateFlow() {
+        val realToken = token
+        val wasAuth = if (realToken != null && realToken.isValid) {
+            AuthState.Authorized
+        } else {
+            AuthState.NotAuthorized
+        }
+        authFlow.emit(wasAuth)
     }
 }
