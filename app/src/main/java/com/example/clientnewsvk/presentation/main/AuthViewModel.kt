@@ -4,9 +4,6 @@ import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.clientnewsvk.data.repository.NewsFeedRepository
-import com.example.clientnewsvk.domain.AuthState
-import com.vk.api.sdk.VK
-import com.vk.api.sdk.auth.VKAuthenticationResult
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.launch
 
