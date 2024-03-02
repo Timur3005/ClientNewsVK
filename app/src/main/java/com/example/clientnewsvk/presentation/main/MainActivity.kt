@@ -39,7 +39,7 @@ class MainActivity : ComponentActivity() {
                     )
                     when (screenState.value) {
                         AuthState.Authorized -> {
-                            MainScreen()
+                            MainScreen(application)
                         }
 
                         AuthState.Initial -> {

@@ -1,8 +1,11 @@
 package com.example.clientnewsvk.data.network
 
+import com.example.clientnewsvk.data.model.CommentsResponseContainerDto
 import com.example.clientnewsvk.data.model.ContainerIsLikedCheckDto
 import com.example.clientnewsvk.data.model.LikesResponseContainer
 import com.example.clientnewsvk.data.model.WallResponseContainerDto
+import com.example.clientnewsvk.data.network.ApiService.Companion.NAME_OF_DELETE_FROM_RECOMMENDATION
+import com.example.clientnewsvk.data.network.ApiService.Companion.NAME_OF_GET_COMMENTS
 import retrofit2.http.GET
 import retrofit2.http.Query
 
@@ -47,11 +50,32 @@ interface ApiService {
         @Query("owner_id") ownerId: Long
     ): ContainerIsLikedCheckDto
 
+    @GET("$NAME_OF_DELETE_FROM_RECOMMENDATION?")
+    suspend fun deleteRecommendation(
+        @Query("v") version: String = API_VERSION,
+        @Query("access_token") token: String,
+        @Query("type") type: String = "wall",
+        @Query("item_id") itemId: Long,
+        @Query("owner_id") ownerId: Long
+    )
+
+    @GET("$NAME_OF_GET_COMMENTS?")
+    suspend fun getComments(
+        @Query("v") version: String = API_VERSION,
+        @Query("access_token") token: String,
+        @Query("owner_id") ownerId: Long,
+        @Query("post_id") postId: Long,
+        @Query("extended") extended: Boolean = true,
+        @Query("fields") fields: String = "photo_100"
+    ): CommentsResponseContainerDto
+
     companion object{
         private const val API_VERSION = "5.199"
         private const val NAME_OF_GET_RECOMMENDED_FEED_POSTS_METHOD = "newsfeed.getRecommended"
         private const val NAME_OF_ADD_LIKE = "likes.add"
         private const val NAME_OF_DELETE_LIKE = "likes.delete"
         private const val NAME_OF_LIKE_CHECK = "likes.isLiked"
+        private const val NAME_OF_DELETE_FROM_RECOMMENDATION = "newsfeed.ignoreItem"
+        private const val NAME_OF_GET_COMMENTS = "wall.getComments"
     }
 }

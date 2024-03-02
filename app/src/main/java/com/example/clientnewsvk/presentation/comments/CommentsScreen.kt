@@ -1,6 +1,8 @@
 package com.example.clientnewsvk.presentation.comments
 
+import android.app.Application
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -11,6 +13,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -23,10 +26,12 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import coil.compose.AsyncImage
 import com.example.clientnewsvk.domain.CommentItem
 import com.example.clientnewsvk.domain.FeedPost
 
@@ -34,10 +39,11 @@ import com.example.clientnewsvk.domain.FeedPost
 @Composable
 fun CommentsScreen(
     navigationClickListener: () -> Unit,
-    feedPost: FeedPost
+    feedPost: FeedPost,
+    application: Application
 ) {
     val viewModel: CommentsViewModel = viewModel(
-        factory = CommentsViewModelFactory(feedPost)
+        factory = CommentsViewModelFactory(feedPost, application)
     )
     val screenState = viewModel.screenState.observeAsState(CommentsScreenState.Initial)
     val currentState = screenState.value
@@ -89,27 +95,29 @@ private fun Comment(
             .fillMaxWidth()
             .padding(8.dp)
     ) {
-        Image(
-            painter = painterResource(id = comment.avatarId),
+        AsyncImage(
+            model = comment.avatarUrl,
             contentDescription = null,
-            modifier = Modifier.size(36.dp)
+            modifier = Modifier
+                .size(36.dp)
+                .clip(CircleShape)
         )
         Spacer(modifier = Modifier.width(8.dp))
         Column {
             Text(
-                text = "Comment id: ${comment.id}",
+                text = comment.userName,
                 color = MaterialTheme.colorScheme.onPrimary,
                 fontSize = 14.sp
             )
             Spacer(modifier = Modifier.height(8.dp))
             Text(
-                text = "Text: ${comment.text}",
+                text = comment.text,
                 color = MaterialTheme.colorScheme.onPrimary,
                 fontSize = 16.sp
             )
             Spacer(modifier = Modifier.height(8.dp))
             Text(
-                text = "Time: ${comment.time}",
+                text = comment.time,
                 color = MaterialTheme.colorScheme.onSecondary,
                 fontSize = 12.sp
             )

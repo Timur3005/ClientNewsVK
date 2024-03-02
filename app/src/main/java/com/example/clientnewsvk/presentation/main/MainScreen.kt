@@ -1,10 +1,12 @@
 package com.example.clientnewsvk.presentation.main
 
+import android.app.Application
 import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBar
@@ -27,9 +29,12 @@ import com.example.clientnewsvk.navigation.BottomNavigationItem
 import com.example.clientnewsvk.presentation.comments.CommentsScreen
 import com.example.clientnewsvk.presentation.news.FeedPostScreen
 
+@OptIn(ExperimentalMaterial3Api::class)
 @RequiresApi(Build.VERSION_CODES.TIRAMISU)
 @Composable
-fun MainScreen() {
+fun MainScreen(
+    application: Application
+) {
     val listItem = listOf(
         BottomNavigationItem.Main,
         BottomNavigationItem.Favourite,
@@ -86,7 +91,8 @@ fun MainScreen() {
                     navigationClickListener = {
                         navState.navController.popBackStack()
                     },
-                    feedPost = feedPost
+                    feedPost = feedPost,
+                    application = application
                 )
             },
             favouriteScreen = {

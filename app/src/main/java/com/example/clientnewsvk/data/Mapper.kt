@@ -1,6 +1,8 @@
 package com.example.clientnewsvk.data
 
+import com.example.clientnewsvk.data.model.CommentsResponseContainerDto
 import com.example.clientnewsvk.data.model.WallResponseContainerDto
+import com.example.clientnewsvk.domain.CommentItem
 import com.example.clientnewsvk.domain.FeedPost
 import com.example.clientnewsvk.domain.StatisticItem
 import com.example.clientnewsvk.domain.StatisticType
@@ -38,11 +40,33 @@ class Mapper {
                             StatisticItem(StatisticType.LIKES, post.likeStatistic.count)
                         ),
                         isLiked = post.likeStatistic.userLikes > 0,
-                        ownerId = abs(post.ownerId)
+                        ownerId = post.ownerId
                     )
                 )
             }
         }
+    }
+
+    fun mapCommentsResponseToCommentItems(response: CommentsResponseContainerDto): List<CommentItem>{
+        val comments = response.response.comments
+        val profiles = response.response.profiles
+
+        return mutableListOf<CommentItem>().apply {
+            for (comment in comments){
+                val profile = profiles.find { it.id == comment.profileId } ?: continue
+                add(
+                    CommentItem(
+                        id = comment.id,
+                        postId = comment.postId,
+                        userName = "${profile.firstName} ${profile.lastName}",
+                        avatarUrl = profile.photoUrl,
+                        text = comment.text,
+                        time = mapLongTimeMilesToDDMMMMYYYY(comment.timeInMillis * 1000)
+                    )
+                )
+            }
+        }
+
     }
 
     private fun mapLongTimeMilesToDDMMMMYYYY(timeMiles: Long): String {

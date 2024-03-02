@@ -1,6 +1,8 @@
 package com.example.clientnewsvk.presentation.news
 
+import android.util.Log
 import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
@@ -10,72 +12,85 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.DismissDirection
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.SwipeToDismiss
-import androidx.compose.material3.rememberDismissState
+import androidx.compose.material3.SwipeToDismissBox
+import androidx.compose.material3.SwipeToDismissBoxValue
+import androidx.compose.material3.Text
+import androidx.compose.material3.rememberSwipeToDismissBoxState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.SideEffect
-import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.clientnewsvk.domain.FeedPost
 import com.example.clientnewsvk.domain.StatisticItem
 
+@OptIn(ExperimentalFoundationApi::class, ExperimentalMaterial3Api::class)
 @Composable
 fun FeedPostScreen(
     paddingValues: PaddingValues,
     onCommentClickListener: (StatisticItem, FeedPost) -> Unit
 ) {
     val viewModel: NewsFeedViewModel = viewModel()
-    val vmState = viewModel.screenState.observeAsState(FeedPostsScreenState.Initial)
+    val vmState = viewModel.screenState.collectAsState(initial = FeedPostsScreenState.Initial)
 
     when (val state = vmState.value) {
 
         FeedPostsScreenState.Initial -> {
-            Box(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(16.dp)
-                ,
-                contentAlignment = Alignment.Center
-            ){
-                CircularProgressIndicator(color = Color.DarkGray)
-            }
+            Log.d("FeedPostScreen", "FeedPostsScreenState.Initial")
         }
 
         is FeedPostsScreenState.Posts -> {
+            Log.d("FeedPostScreen", "FeedPostsScreenState.Posts")
             FeedPosts(
                 paddingValues = paddingValues,
                 posts = state.posts,
                 onCommentClickListener = onCommentClickListener,
                 onPostSwipedEndToStart = {
-                    viewModel.deleteItem(it)
+                    viewModel.remove(it)
                 },
                 onSharesClickListener = { statistic, post ->
-                    viewModel.updateStatisticList(statistic, post)
+
                 },
                 onLikesClickListener = { _, post ->
-                    viewModel.exchangeLikedStatus(post)
+                    viewModel.changeLikeStatus(post)
                 },
                 onViewsClickListener = { statistic, post ->
-                    viewModel.updateStatisticList(statistic, post)
+
                 },
                 isNotDownloadingListener = {
-                    viewModel.loadRecommendations()
+                    viewModel.loadNextRecommendations()
                 },
                 isDownloading = state.isDownloading
             )
         }
+
+        FeedPostsScreenState.Loading -> {
+            Log.d("FeedPostScreen", "$state")
+            Log.d("FeedPostScreen", "FeedPostsScreenState.Loading")
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(16.dp),
+                contentAlignment = Alignment.Center
+            ) {
+                CircularProgressIndicator(color = Color.DarkGray)
+            }
+        }
     }
 }
 
+@ExperimentalMaterial3Api
+@ExperimentalFoundationApi
 @Composable
-@OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
 private fun FeedPosts(
     paddingValues: PaddingValues,
     posts: List<FeedPost>,
@@ -95,22 +110,43 @@ private fun FeedPosts(
             start = 8.dp,
             end = 8.dp
         ),
+        state = rememberLazyListState(),
         verticalArrangement = Arrangement.spacedBy(8.dp)
     ) {
-        items(items = posts, key = { it.id }) { post ->
+        items(
+            items = posts,
+            key = { it.id }
+        ) { post ->
+            val dismissState = rememberSwipeToDismissBoxState(
+                confirmValueChange = {
+                    if (it == SwipeToDismissBoxValue.EndToStart) {
+                        onPostSwipedEndToStart(post)
+                        true
+                    } else {
+                        false
+                    }
+                }
+            )
 
-            val dismissState = rememberDismissState()
+            if (dismissState.currentValue == SwipeToDismissBoxValue.EndToStart) return@items
 
-            if (dismissState.isDismissed(DismissDirection.EndToStart)) {
-                onPostSwipedEndToStart(post)
-            }
-
-            SwipeToDismiss(
+            SwipeToDismissBox(
                 modifier = Modifier.animateItemPlacement(),
                 state = dismissState,
-                directions = setOf(DismissDirection.EndToStart),
-                background = {},
-                dismissContent = {
+                enableDismissFromStartToEnd = false,
+                backgroundContent = {
+                    Box(
+                        modifier = Modifier
+                            .padding(16.dp)
+                            .fillMaxSize()
+                            .clip(RoundedCornerShape(4.dp))
+                            .background(Color.Red),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Text(text = "Delete")
+                    }
+                },
+                content = {
                     NewsCard(
                         feedPost = post,
                         onSharesClickListener = {
@@ -135,13 +171,11 @@ private fun FeedPosts(
                     modifier = Modifier
                         .fillMaxWidth()
                         .wrapContentHeight()
-                        .padding(16.dp)
-                    ,
+                        .padding(16.dp),
                     contentAlignment = Alignment.Center
-                ){
+                ) {
                     CircularProgressIndicator(color = Color.DarkGray)
                 }
-
             } else {
                 SideEffect {
                     isNotDownloadingListener()
