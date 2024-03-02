@@ -3,9 +3,11 @@ package com.example.clientnewsvk.presentation.comments
 import android.app.Application
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -16,6 +18,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -24,7 +27,9 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.painterResource
@@ -45,42 +50,52 @@ fun CommentsScreen(
     val viewModel: CommentsViewModel = viewModel(
         factory = CommentsViewModelFactory(feedPost, application)
     )
-    val screenState = viewModel.screenState.observeAsState(CommentsScreenState.Initial)
-    val currentState = screenState.value
-    if (currentState is CommentsScreenState.Comments) {
-        Scaffold(
-            topBar = {
-                TopAppBar(
-                    title = {
-                        Text(
-                            text = "Comments For Feed Post with id: ${currentState.post.id} " +
-                                    "and Text: ${currentState.post.text}"
-                        )
-                    },
-                    navigationIcon = {
-                        IconButton(onClick = { navigationClickListener() }) {
-                            Icon(imageVector = Icons.Filled.ArrowBack, contentDescription = null)
+    val screenState = viewModel.screenState.collectAsState(CommentsScreenState.Initial)
+    when (val currentState = screenState.value){
+        is CommentsScreenState.Comments -> {
+            Scaffold(
+                topBar = {
+                    TopAppBar(
+                        title = {
+                            Text(
+                                text = "Comments For Feed Post with id: ${currentState.post.id} " +
+                                        "and Text: ${currentState.post.text}"
+                            )
+                        },
+                        navigationIcon = {
+                            IconButton(onClick = { navigationClickListener() }) {
+                                Icon(imageVector = Icons.Filled.ArrowBack, contentDescription = null)
+                            }
                         }
-                    }
-                )
-            }
-        ) { paddingValues ->
-            LazyColumn(
-                modifier = Modifier
-                    .padding(paddingValues)
-                    .padding(
-                        top = 16.dp,
-                        start = 8.dp,
-                        end = 8.dp,
-                        bottom = 72.dp
                     )
-            ) {
-                items(
-                    items = currentState.comments,
-                    key = { it.id }
-                ) { comment ->
-                    Comment(comment = comment)
                 }
+            ) { paddingValues ->
+                LazyColumn(
+                    modifier = Modifier
+                        .padding(paddingValues)
+                        .padding(
+                            top = 16.dp,
+                            start = 8.dp,
+                            end = 8.dp,
+                            bottom = 72.dp
+                        )
+                ) {
+                    items(
+                        items = currentState.comments,
+                        key = { it.id }
+                    ) { comment ->
+                        Comment(comment = comment)
+                    }
+                }
+            }
+        }
+        CommentsScreenState.Initial -> {}
+        CommentsScreenState.Loading -> {
+            Box(
+                modifier = Modifier.fillMaxSize(),
+                contentAlignment = Alignment.Center
+            ){
+                CircularProgressIndicator()
             }
         }
     }

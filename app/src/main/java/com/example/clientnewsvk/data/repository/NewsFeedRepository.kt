@@ -1,6 +1,7 @@
 package com.example.clientnewsvk.data.repository
 
 import android.app.Application
+import androidx.compose.ui.res.stringArrayResource
 import com.example.clientnewsvk.data.Mapper
 import com.example.clientnewsvk.data.network.ApiFactory
 import com.example.clientnewsvk.domain.CommentItem
@@ -16,6 +17,8 @@ import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.retry
+import kotlinx.coroutines.flow.shareIn
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.withContext
 
@@ -30,6 +33,12 @@ class NewsFeedRepository(
     private val mapper = Mapper()
     private val nextDataNeededEvents = MutableSharedFlow<Unit>(replay = 1)
     private val refreshedListFlow = MutableSharedFlow<List<FeedPost>>()
+
+    private val _feedPosts = mutableListOf<FeedPost>()
+    private val feedPosts: List<FeedPost>
+        get() = _feedPosts.toList()
+
+    private var nextFrom: String? = null
     private val loadedListFlow = flow {
         nextDataNeededEvents.emit(Unit)
         nextDataNeededEvents.collect {
@@ -43,7 +52,10 @@ class NewsFeedRepository(
             val response = if (startFrom == null) {
                 apiService.responseRecommendedFeedPosts(token = getAccessToken())
             } else {
-                apiService.responseRecommendedFeedPosts(getAccessToken(), startFrom)
+                apiService.responseRecommendedFeedPosts(
+                    token = getAccessToken(),
+                    startFrom = startFrom
+                )
             }
             nextFrom = response.wallResponseDto.nextFrom
             val posts = mapper.mapWallContainerDtoToListFeedPost(response)
@@ -51,13 +63,6 @@ class NewsFeedRepository(
             emit(feedPosts)
         }
     }
-
-
-    private val _feedPosts = mutableListOf<FeedPost>()
-    private val feedPosts: List<FeedPost>
-        get() = _feedPosts.toList()
-
-    private var nextFrom: String? = null
 
     val recommendations: StateFlow<List<FeedPost>> = loadedListFlow
         .mergeWith(refreshedListFlow)
@@ -85,18 +90,29 @@ class NewsFeedRepository(
         refreshedListFlow.emit(feedPosts)
     }
 
-    suspend fun getComments(feedPost: FeedPost): List<CommentItem> {
-        val comments = withContext(
-            Dispatchers.IO
-        ) {
-            apiService.getComments(
-                token = getAccessToken(),
-                ownerId = feedPost.ownerId,
-                postId = feedPost.id
-            )
-        }
-        return mapper.mapCommentsResponseToCommentItems(comments)
+    private val responseComments = MutableSharedFlow<FeedPost>(replay = 1)
+    suspend fun responseCommentsByFeedPost(feedPost: FeedPost) {
+        responseComments.emit(feedPost)
     }
+
+    val commentsFlow = flow {
+        responseComments.collect { feedPost ->
+            val comments = withContext(Dispatchers.IO) {
+                apiService.getComments(
+                    token = getAccessToken(),
+                    ownerId = feedPost.ownerId,
+                    postId = feedPost.id
+                )
+            }
+            emit(mapper.mapCommentsResponseToCommentItems(comments))
+        }
+    }
+        .retry()
+        .shareIn(
+            scope = coroutineScope,
+            started = SharingStarted.Lazily,
+            replay = 1
+        )
 
     suspend fun changeLikeStatus(feedPost: FeedPost) {
         val response = if (feedPost.isLiked) {

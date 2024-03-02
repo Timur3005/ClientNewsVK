@@ -1,19 +1,14 @@
 package com.example.clientnewsvk.presentation.news
 
 import android.app.Application
-import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.clientnewsvk.data.repository.NewsFeedRepository
 import com.example.clientnewsvk.domain.FeedPost
-import com.example.clientnewsvk.domain.StatisticItem
 import com.example.clientnewsvk.mergeWith
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.filter
-import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.launch
 
