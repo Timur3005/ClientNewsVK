@@ -7,16 +7,13 @@ import com.example.clientnewsvk.data.repository.NewsFeedRepository
 import com.example.clientnewsvk.domain.AuthState
 import com.vk.api.sdk.VK
 import com.vk.api.sdk.auth.VKAuthenticationResult
+import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.launch
 
 class AuthViewModel(application: Application) : AndroidViewModel(application) {
 
     private val repository = NewsFeedRepository(application)
-    val authState = repository.authFlow
-
-    init {
-        getAuthState()
-    }
+    val authState = repository.authFlow.onStart { getAuthState() }
 
     fun getAuthState() {
         viewModelScope.launch {
