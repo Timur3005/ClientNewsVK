@@ -26,9 +26,9 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import com.example.clientnewsvk.R
-import com.example.clientnewsvk.domain.FeedPost
-import com.example.clientnewsvk.domain.StatisticItem
-import com.example.clientnewsvk.domain.StatisticType
+import com.example.clientnewsvk.domain.entity.FeedPost
+import com.example.clientnewsvk.domain.entity.StatisticItem
+import com.example.clientnewsvk.domain.entity.StatisticType
 
 @Composable
 fun NewsCard(

@@ -1,8 +1,5 @@
 package com.example.clientnewsvk.presentation.comments
 
-import android.app.Application
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -17,7 +14,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -28,30 +25,33 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.AsyncImage
-import com.example.clientnewsvk.domain.CommentItem
-import com.example.clientnewsvk.domain.FeedPost
+import com.example.clientnewsvk.ClientVKApplication
+import com.example.clientnewsvk.domain.entity.CommentItem
+import com.example.clientnewsvk.domain.entity.FeedPost
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CommentsScreen(
     navigationClickListener: () -> Unit,
     feedPost: FeedPost,
-    application: Application
 ) {
+    val component =
+        (LocalContext.current.applicationContext as ClientVKApplication)
+            .component.getCommentsComponentFactory().create(feedPost)
+
     val viewModel: CommentsViewModel = viewModel(
-        factory = CommentsViewModelFactory(feedPost, application)
+        factory = component.getViewModelFactory()
     )
     val screenState = viewModel.screenState.collectAsState(CommentsScreenState.Initial)
-    when (val currentState = screenState.value){
+    when (val currentState = screenState.value) {
         is CommentsScreenState.Comments -> {
             Scaffold(
                 topBar = {
@@ -64,7 +64,10 @@ fun CommentsScreen(
                         },
                         navigationIcon = {
                             IconButton(onClick = { navigationClickListener() }) {
-                                Icon(imageVector = Icons.Filled.ArrowBack, contentDescription = null)
+                                Icon(
+                                    imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                                    contentDescription = null
+                                )
                             }
                         }
                     )

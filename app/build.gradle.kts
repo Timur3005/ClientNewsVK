@@ -2,6 +2,7 @@ plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
     id("kotlin-parcelize")
+    id("kotlin-kapt")
 }
 
 android {
@@ -52,6 +53,9 @@ android {
 
 dependencies {
 
+    implementation ("com.google.dagger:dagger:2.48.1")
+    kapt ("com.google.dagger:dagger-compiler:2.48.1")
+
     implementation ("com.vk:android-sdk-core:4.1.0")
     implementation ("com.vk:android-sdk-api:4.1.0")
     implementation ("com.squareup.okhttp3:logging-interceptor:4.9.3")
@@ -75,7 +79,7 @@ dependencies {
     implementation("androidx.compose.ui:ui-tooling-preview")
     implementation("androidx.compose.material3:material3-android:1.2.0")
     testImplementation("junit:junit:4.13.2")
-    androidTestImplementation("androidx.compose.ui:ui-test-junit4")
+    androidTestImplementation ("androidx.compose.ui:ui-test-junit4:1.6.2")
     debugImplementation("androidx.compose.ui:ui-tooling")
     implementation("androidx.compose.foundation:foundation:1.6.2")
     debugImplementation("androidx.compose.ui:ui-test-manifest")

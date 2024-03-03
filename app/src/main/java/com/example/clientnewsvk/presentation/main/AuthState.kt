@@ -1,4 +1,4 @@
-package com.example.clientnewsvk.domain
+package com.example.clientnewsvk.presentation.main
 
 sealed interface AuthState {
     data object Initial: AuthState

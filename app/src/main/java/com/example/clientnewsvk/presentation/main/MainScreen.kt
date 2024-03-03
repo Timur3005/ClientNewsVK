@@ -1,12 +1,10 @@
 package com.example.clientnewsvk.presentation.main
 
-import android.app.Application
 import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBar
@@ -23,17 +21,17 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.compose.currentBackStackEntryAsState
-import com.example.clientnewsvk.navigation.rememberNavigationState
 import com.example.clientnewsvk.navigation.AppNavigationGraph
 import com.example.clientnewsvk.navigation.BottomNavigationItem
+import com.example.clientnewsvk.navigation.rememberNavigationState
 import com.example.clientnewsvk.presentation.comments.CommentsScreen
 import com.example.clientnewsvk.presentation.news.FeedPostScreen
+import com.example.clientnewsvk.presentation.viewmodelfactory.ViewModelFactory
 
-@OptIn(ExperimentalMaterial3Api::class)
 @RequiresApi(Build.VERSION_CODES.TIRAMISU)
 @Composable
 fun MainScreen(
-    application: Application
+    viewModelFactory: ViewModelFactory,
 ) {
     val listItem = listOf(
         BottomNavigationItem.Main,
@@ -83,7 +81,8 @@ fun MainScreen(
                     paddingValues = paddingValues,
                     onCommentClickListener = { _, feedPost ->
                         navState.navigateToComments(feedPost)
-                    }
+                    },
+                    viewModelFactory = viewModelFactory
                 )
             },
             commentsScreen = { feedPost ->
@@ -91,8 +90,7 @@ fun MainScreen(
                     navigationClickListener = {
                         navState.navController.popBackStack()
                     },
-                    feedPost = feedPost,
-                    application = application
+                    feedPost = feedPost
                 )
             },
             favouriteScreen = {

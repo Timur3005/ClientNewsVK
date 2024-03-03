@@ -1,20 +1,23 @@
 package com.example.clientnewsvk.presentation.main
 
-import android.app.Application
-import androidx.lifecycle.AndroidViewModel
+import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.clientnewsvk.data.repository.NewsFeedRepository
+import com.example.clientnewsvk.domain.usecases.GetAuthStateUseCase
+import com.example.clientnewsvk.domain.usecases.ResponseAuthStateUseCase
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
-class AuthViewModel(application: Application) : AndroidViewModel(application) {
+class AuthViewModel @Inject constructor(
+    getAuthStateUseCase: GetAuthStateUseCase,
+    private val responseAuthStateUseCase: ResponseAuthStateUseCase
+) : ViewModel() {
 
-    private val repository = NewsFeedRepository(application)
-    val authState = repository.authFlow.onStart { getAuthState() }
+    val authState = getAuthStateUseCase().onStart { responseAuthState() }
 
-    fun getAuthState() {
+    fun responseAuthState() {
         viewModelScope.launch {
-            repository.responseAuthStateFlow()
+            responseAuthStateUseCase()
         }
     }
 }

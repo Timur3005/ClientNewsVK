@@ -1,17 +1,18 @@
-package com.example.clientnewsvk.data
+package com.example.clientnewsvk.data.mapper
 
 import com.example.clientnewsvk.data.model.CommentsResponseContainerDto
 import com.example.clientnewsvk.data.model.WallResponseContainerDto
-import com.example.clientnewsvk.domain.CommentItem
-import com.example.clientnewsvk.domain.FeedPost
-import com.example.clientnewsvk.domain.StatisticItem
-import com.example.clientnewsvk.domain.StatisticType
+import com.example.clientnewsvk.domain.entity.CommentItem
+import com.example.clientnewsvk.domain.entity.FeedPost
+import com.example.clientnewsvk.domain.entity.StatisticItem
+import com.example.clientnewsvk.domain.entity.StatisticType
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
+import javax.inject.Inject
 import kotlin.math.abs
 
-class Mapper {
+class Mapper @Inject constructor() {
     fun mapWallContainerDtoToListFeedPost(container: WallResponseContainerDto): List<FeedPost> {
         val postsDto = container.wallResponseDto.feedPosts
         val groupsDto = container.wallResponseDto.groups

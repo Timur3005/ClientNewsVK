@@ -28,18 +28,19 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.example.clientnewsvk.domain.FeedPost
-import com.example.clientnewsvk.domain.StatisticItem
+import com.example.clientnewsvk.domain.entity.FeedPost
+import com.example.clientnewsvk.domain.entity.StatisticItem
+import com.example.clientnewsvk.presentation.viewmodelfactory.ViewModelFactory
 
 @OptIn(ExperimentalFoundationApi::class, ExperimentalMaterial3Api::class)
 @Composable
 fun FeedPostScreen(
     paddingValues: PaddingValues,
-    onCommentClickListener: (StatisticItem, FeedPost) -> Unit
+    onCommentClickListener: (StatisticItem, FeedPost) -> Unit,
+    viewModelFactory: ViewModelFactory,
 ) {
-    val viewModel: NewsFeedViewModel = viewModel()
+    val viewModel: NewsFeedViewModel = viewModel(factory = viewModelFactory)
     val vmState = viewModel.screenState.collectAsState(initial = FeedPostsScreenState.Initial)
 
     when (val state = vmState.value) {

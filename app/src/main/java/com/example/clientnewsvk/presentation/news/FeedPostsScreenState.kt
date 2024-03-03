@@ -1,6 +1,6 @@
 package com.example.clientnewsvk.presentation.news
 
-import com.example.clientnewsvk.domain.FeedPost
+import com.example.clientnewsvk.domain.entity.FeedPost
 
 sealed class FeedPostsScreenState {
     data object Initial: FeedPostsScreenState()
