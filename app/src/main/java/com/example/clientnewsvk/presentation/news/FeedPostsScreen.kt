@@ -1,6 +1,5 @@
 package com.example.clientnewsvk.presentation.news
 
-import android.util.Log
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -22,6 +21,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.rememberSwipeToDismissBoxState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.SideEffect
+import androidx.compose.runtime.State
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -31,26 +31,35 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.clientnewsvk.domain.entity.FeedPost
 import com.example.clientnewsvk.domain.entity.StatisticItem
-import com.example.clientnewsvk.presentation.viewmodelfactory.ViewModelFactory
+import com.example.clientnewsvk.getApplicationComponent
 
-@OptIn(ExperimentalFoundationApi::class, ExperimentalMaterial3Api::class)
 @Composable
-fun FeedPostScreen(
+fun FeedPostsScreen(
     paddingValues: PaddingValues,
     onCommentClickListener: (StatisticItem, FeedPost) -> Unit,
-    viewModelFactory: ViewModelFactory,
 ) {
-    val viewModel: NewsFeedViewModel = viewModel(factory = viewModelFactory)
+    val component = getApplicationComponent()
+    val viewModel: NewsFeedViewModel = viewModel(factory = component.getViewModelFactory())
     val vmState = viewModel.screenState.collectAsState(initial = FeedPostsScreenState.Initial)
 
+    FeedPostsScreenContent(vmState, paddingValues, onCommentClickListener, viewModel)
+}
+
+@Composable
+@OptIn(ExperimentalFoundationApi::class, ExperimentalMaterial3Api::class)
+private fun FeedPostsScreenContent(
+    vmState: State<FeedPostsScreenState>,
+    paddingValues: PaddingValues,
+    onCommentClickListener: (StatisticItem, FeedPost) -> Unit,
+    viewModel: NewsFeedViewModel,
+) {
     when (val state = vmState.value) {
 
         FeedPostsScreenState.Initial -> {
-            Log.d("FeedPostScreen", "FeedPostsScreenState.Initial")
+
         }
 
         is FeedPostsScreenState.Posts -> {
-            Log.d("FeedPostScreen", "FeedPostsScreenState.Posts")
             FeedPosts(
                 paddingValues = paddingValues,
                 posts = state.posts,
@@ -75,8 +84,6 @@ fun FeedPostScreen(
         }
 
         FeedPostsScreenState.Loading -> {
-            Log.d("FeedPostScreen", "$state")
-            Log.d("FeedPostScreen", "FeedPostsScreenState.Loading")
             Box(
                 modifier = Modifier
                     .fillMaxSize()

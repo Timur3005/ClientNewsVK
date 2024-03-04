@@ -24,33 +24,40 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.State
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.AsyncImage
-import com.example.clientnewsvk.ClientVKApplication
 import com.example.clientnewsvk.domain.entity.CommentItem
 import com.example.clientnewsvk.domain.entity.FeedPost
+import com.example.clientnewsvk.getApplicationComponent
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CommentsScreen(
     navigationClickListener: () -> Unit,
     feedPost: FeedPost,
 ) {
-    val component =
-        (LocalContext.current.applicationContext as ClientVKApplication)
-            .component.getCommentsComponentFactory().create(feedPost)
+    val component = getApplicationComponent().getCommentsComponentFactory().create(feedPost)
 
     val viewModel: CommentsViewModel = viewModel(
         factory = component.getViewModelFactory()
     )
     val screenState = viewModel.screenState.collectAsState(CommentsScreenState.Initial)
+
+    CommentsScreenContent(screenState, navigationClickListener)
+}
+
+@Composable
+@OptIn(ExperimentalMaterial3Api::class)
+private fun CommentsScreenContent(
+    screenState: State<CommentsScreenState>,
+    navigationClickListener: () -> Unit,
+) {
     when (val currentState = screenState.value) {
         is CommentsScreenState.Comments -> {
             Scaffold(
@@ -92,12 +99,13 @@ fun CommentsScreen(
                 }
             }
         }
+
         CommentsScreenState.Initial -> {}
         CommentsScreenState.Loading -> {
             Box(
                 modifier = Modifier.fillMaxSize(),
                 contentAlignment = Alignment.Center
-            ){
+            ) {
                 CircularProgressIndicator()
             }
         }

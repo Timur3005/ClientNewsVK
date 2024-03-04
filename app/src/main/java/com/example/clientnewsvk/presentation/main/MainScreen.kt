@@ -25,14 +25,11 @@ import com.example.clientnewsvk.navigation.AppNavigationGraph
 import com.example.clientnewsvk.navigation.BottomNavigationItem
 import com.example.clientnewsvk.navigation.rememberNavigationState
 import com.example.clientnewsvk.presentation.comments.CommentsScreen
-import com.example.clientnewsvk.presentation.news.FeedPostScreen
-import com.example.clientnewsvk.presentation.viewmodelfactory.ViewModelFactory
+import com.example.clientnewsvk.presentation.news.FeedPostsScreen
 
 @RequiresApi(Build.VERSION_CODES.TIRAMISU)
 @Composable
-fun MainScreen(
-    viewModelFactory: ViewModelFactory,
-) {
+fun MainScreen() {
     val listItem = listOf(
         BottomNavigationItem.Main,
         BottomNavigationItem.Favourite,
@@ -77,12 +74,11 @@ fun MainScreen(
         AppNavigationGraph(
             navController = navState.navController,
             newsFeedScreen = {
-                FeedPostScreen(
+                FeedPostsScreen(
                     paddingValues = paddingValues,
                     onCommentClickListener = { _, feedPost ->
                         navState.navigateToComments(feedPost)
-                    },
-                    viewModelFactory = viewModelFactory
+                    }
                 )
             },
             commentsScreen = { feedPost ->
