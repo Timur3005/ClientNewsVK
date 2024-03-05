@@ -3,6 +3,7 @@ package com.example.clientnewsvk.domain.repository
 import com.example.clientnewsvk.presentation.main.AuthState
 import com.example.clientnewsvk.domain.entity.CommentItem
 import com.example.clientnewsvk.domain.entity.FeedPost
+import com.example.clientnewsvk.domain.entity.ProfileItem
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
 
@@ -18,5 +19,8 @@ interface NewsFeedRepository {
 
     val authFlow: StateFlow<AuthState>
     suspend fun responseAuthStateFlow()
+
+    val profileItem: StateFlow<ProfileItem>
+    suspend fun responseProfileItem()
 
 }
